@@ -1,6 +1,3 @@
-# DesenvolvimentoSoftwareCorp
-
-## Padaria PãoKetin
 ```mermaid
 erDiagram
     %% Definição das Entidades (Tabelas) com Atributos
@@ -8,13 +5,13 @@ erDiagram
     PADARIA {
         int id_padaria PK
         varchar nome
-        bigint cep
+        varchar(9) cep
     }
     
     FUNCIONARIO {
         int id_funcionario PK
         int id_padaria FK
-        varchar nome
+        varchar(255) nome
         varchar cargo
         date data_contratacao
     }
@@ -37,20 +34,24 @@ erDiagram
         int id_tarefa PK
         int id_funcionario FK
         varchar descricao
-        date_time data_inicio
-        date_time data_conclusao
-        date_time data_previsao
+        datetime data_inicio
+        datetime data_conclusao
+        datetime data_previsao
         boolean concluida
     }
 
     PEDIDO {
-        int id_pedido
-        int qnt_paes
+        int id_pedido PK
         decimal valor_total
-        date_time data_pedido
-        
+        datetime data_pedido
     }
-    
+
+    ITEM_PEDIDO {
+        int id_pedido PK, FK
+        int id_pao PK, FK
+        int id_fornada FK 
+        int quantidade
+    }
 
     %% Definição dos Relacionamentos
     
@@ -58,15 +59,11 @@ erDiagram
     PADARIA ||--o{ FORNADA : Contem
 
     FUNCIONARIO ||--o{ TAREFA : Executa
-
-    %% N:N (FORNADA x PÃO) - Uma tabela associativa seria a implementação real
-    FORNADA }o--o{ PAO : Produz
-
-    %% N:N (FUNCIONARIO x FORNADA) - Uma tabela associativa seria a implementação real
-    FUNCIONARIO }o--o{ FORNADA : Realiza
     
-    %% Onde:
-    %% PK = Primary Key (Chave Primária)
-    %% FK = Foreign Key (Chave Estrangeira)
-    %% O uso de FK nos atributos conecta logicamente as tabelas.
+    %% Relacionamentos resolvidos pela tabela ITEM_PEDIDO
+    PEDIDO ||--o{ ITEM_PEDIDO : Contem
+    PAO ||--o{ ITEM_PEDIDO : Especifica_Pao
+    
+    %% Associação de ITEM_PEDIDO com FORNADA (Para rastrear a origem do produto)
+    FORNADA }o--o{ ITEM_PEDIDO : Produziu
 ```
