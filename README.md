@@ -45,6 +45,9 @@ erDiagram
 
     PEDIDO {
         int id_pedido
+        int qnt_paes
+        decimal valor_total
+        date_time data_pedido
         
     }
     
