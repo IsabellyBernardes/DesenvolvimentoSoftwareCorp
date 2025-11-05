@@ -8,7 +8,7 @@ erDiagram
     PADARIA {
         int id_padaria PK
         varchar nome
-        varchar endereco
+        bigint cep
     }
     
     FUNCIONARIO {
@@ -37,11 +37,15 @@ erDiagram
         int id_tarefa PK
         int id_funcionario FK
         varchar descricao
+        date_time data_inicio
+        date_time data_conclusao
+        date_time data_previsao
         boolean concluida
     }
 
     PEDIDO {
-        int id_tarefa
+        int id_pedido
+        
     }
     
 
