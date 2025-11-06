@@ -26,7 +26,6 @@ erDiagram
     PAO {
         int id_pao PK
         varchar nome_pao
-        varchar tipo_massa
         decimal preco
     }
     
