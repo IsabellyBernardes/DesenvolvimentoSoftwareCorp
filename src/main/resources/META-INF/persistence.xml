@@ -11,8 +11,8 @@
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:derby://localhost:1527/DSC;create=true"/>
-            <property name="jakarta.persistence.jdbc.user" value="lucas"/>
-            <property name="jakarta.persistence.jdbc.password" value="1234"/>
+            <property name="jakarta.persistence.jdbc.user" value="paaokentyn"/>
+            <property name="jakarta.persistence.jdbc.password" value="paokentyn"/>
             <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="eclipselink.logging.level" value="FINE"/>
             <property name="eclipselink.target-database" value="Derby"/>
