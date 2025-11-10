@@ -20,6 +20,9 @@ public class Padaria {
     @Column(name = "TXT_CEP", length = 9)
     private String cep;
     
+    @Column(name = "TXT_ENDERECO", length = 500)
+    private String endereco;
+    
     @OneToMany(mappedBy = "padaria", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Funcionario> funcionarios;
     
@@ -33,6 +36,13 @@ public class Padaria {
     public void setNome(String nome) { this.nome = nome; }
     public String getCep() { return cep; }
     public void setCep(String cep) { this.cep = cep; }
+    public String getEndereco() {
+        return endereco;
+    }
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+    
     
     // Métodos de Coleção 
     public List<Funcionario> getFuncionarios() { return funcionarios; }
