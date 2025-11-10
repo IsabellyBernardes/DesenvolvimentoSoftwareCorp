@@ -1,44 +1,41 @@
 <dataset>
-    <TB_CATEGORIA txt_nome="Instrumentos Musicais"/>
-    <TB_CATEGORIA txt_nome="Guitarras" id_categoria_mae="1"/>
-    <TB_CATEGORIA txt_nome="Pedais" id_categoria_mae="1"/>
-    <TB_CATEGORIA txt_nome="Instrumentos de Sopro" id_categoria_mae="1"/>
-    <TB_CATEGORIA txt_nome="Meios de Transporte"/>
-    <TB_CATEGORIA txt_nome="Motocicletas" id_categoria_mae="5"/>
-    <!--  Item id = 1  -->
-    <TB_ITEM txt_titulo="boss DD-7" txt_descricao="Delay digital boss"/>
-    <TB_ITENS_CATEGORIAS id_item="1" id_categoria="1"/>
-    <TB_ITENS_CATEGORIAS id_item="1" id_categoria="3"/>
-    <!--  Item id = 2  -->
-    <TB_ITEM txt_titulo="boss DM-2 waza" txt_descricao="Delay analógico Boss (reedição)"/>
-    <TB_ITENS_CATEGORIAS id_item="2" id_categoria="1"/>
-    <TB_ITENS_CATEGORIAS id_item="2" id_categoria="3"/>
-    <!--  Item id = 3  -->
-    <TB_ITEM txt_titulo="Gibson SG Standard" txt_descricao="Guitarra Gibson em estado de nova"/>
-    <TB_ITENS_CATEGORIAS id_item="3" id_categoria="1"/>
-    <TB_ITENS_CATEGORIAS id_item="3" id_categoria="2"/>
-    <!--  Item id = 4  -->
-    <TB_ITEM txt_titulo="Flauta Doce" txt_descricao="Flauta Doce Usada"/>
-    <TB_ITENS_CATEGORIAS id_item="4" id_categoria="1"/>
-    <TB_ITENS_CATEGORIAS id_item="4" id_categoria="4"/>
-    <!--  Item id = 5  -->
-    <TB_ITEM txt_titulo="Flauta Doce" txt_descricao="Flauta Doce Nova"/>
-    <TB_ITENS_CATEGORIAS id_item="5" id_categoria="1"/>
-    <TB_ITENS_CATEGORIAS id_item="5" id_categoria="4"/>
-    <!--  Oferta id = 1  -->
-    <TB_OFERTA id_item="1" num_valor="500.00" dt_oferta="2020-01-12 1:00:30"/>
-    <!--  Oferta id = 2  -->
-    <TB_OFERTA id_item="1" num_valor="520.00" dt_oferta="2020-01-12 1:30:52"/>
-    <!--  Oferta id = 3  -->
-    <TB_OFERTA id_item="2" num_valor="720.00" dt_oferta="2020-01-12 12:31:20"/>
-    <!--  Oferta id = 4  -->
-    <TB_OFERTA id_item="2" num_valor="725.00" dt_oferta="2020-01-12 12:35:00"/>
-    <!--  Oferta id = 5  -->
-    <TB_OFERTA id_item="2" num_valor="726.00" dt_oferta="2020-01-12 12:38:10"/>
-    <!--  Oferta id = 6  -->
-    <TB_OFERTA id_item="3" num_valor="6000.00" dt_oferta="2020-01-12 12:38:40"/>
-    <!--  Oferta id = 7  -->
-    <TB_OFERTA id_item="3" num_valor="6300.00" dt_oferta="2020-01-12 12:39:10"/>
-    <!--  Oferta id = 8  -->
-    <TB_OFERTA id_item="4" num_valor="100.00" dt_oferta="2020-01-12 12:41:10"/>
+    <TB_PADARIA id="1" txt_nome="Padaria do Norte" txt_cep="50000000"/>
+
+    <TB_FUNCIONARIO id="1" 
+                    id_padaria="1" 
+                    txt_nome="João Silva" 
+                    txt_cargo="Padeiro Senior"
+                    dt_contratacao="2022-05-15"
+                    num_salario="3200.00"/>
+
+    <TB_PAO id="1" txt_nome_pao="Pão Integral" num_preco="5.50"/> 
+    <TB_PAO id="2" txt_nome_pao="Pão de Queijo" num_preco="3.00"/>
+
+    <TB_FORNADA id="1" 
+                id_padaria="1" 
+                dt_fornada="2025-11-09" 
+                hr_inicio="06:30:00"/>
+
+    <TB_TAREFA id="1" 
+               id_funcionario="1"
+               txt_descricao="Checar estoque de farinha"
+               dt_inicio="2025-11-10 08:00:00"
+               dt_previsao="2025-11-15 12:00:00"
+               flg_concluida="false"/>
+
+    <TB_PEDIDO id="1" 
+               num_valor_total="70.00" 
+               dt_pedido="2025-11-10 09:30:00"/>
+
+    <TB_ITEM_PEDIDO id="1" 
+                    id_pedido="1" 
+                    id_pao="1" 
+                    id_fornada="1" 
+                    num_quantidade="10"/>
+    
+    <TB_ITEM_PEDIDO id="2" 
+                    id_pedido="1" 
+                    id_pao="2" 
+                    id_fornada="1" 
+                    num_quantidade="5"/>
 </dataset>
