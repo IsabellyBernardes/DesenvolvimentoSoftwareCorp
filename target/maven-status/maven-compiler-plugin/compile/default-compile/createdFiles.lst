@@ -13,6 +13,5 @@ ifpe\paokentyn\domain\ItemPedido.class
 ifpe\paokentyn\repository\PedidoRepositorio.class
 ifpe\paokentyn\repository\Repositorio.class
 ifpe\paokentyn\repository\RepositorioGenerico.class
-ifpe\paokentyn\test\TestePadaria.class
 ifpe\paokentyn\domain\Tarefa.class
 ifpe\paokentyn\repository\ItemPedidoRepositorio.class

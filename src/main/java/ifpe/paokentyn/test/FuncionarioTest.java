@@ -8,7 +8,7 @@ import ifpe.paokentyn.repository.PadariaRepositorio;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TesteFuncionario {
+public class FuncionarioTest {
     
     // Repositórios assumidos
     private final static PadariaRepositorio padariaRepositorio = new PadariaRepositorio();

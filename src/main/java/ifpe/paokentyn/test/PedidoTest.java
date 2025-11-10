@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class TestePedido {
+public class PedidoTest {
 
     private final static PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
     private final static Repositorio<Pao> paoRepositorio = new RepositorioGenerico<>(Pao.class) {};

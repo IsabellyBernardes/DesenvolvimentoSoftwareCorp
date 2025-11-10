@@ -8,7 +8,7 @@ import ifpe.paokentyn.repository.PadariaRepositorio;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TesteFornada {
+public class FornadaTest {
     
     // Repositórios assumidos
     private final static PadariaRepositorio padariaRepositorio = new PadariaRepositorio();
@@ -83,7 +83,6 @@ public class TesteFornada {
 
     // --- Métodos Auxiliares ---
     
-    [cite_start]// Método auxiliar adaptado 
     private static Date getData(int dia, int mes, int ano) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, ano);

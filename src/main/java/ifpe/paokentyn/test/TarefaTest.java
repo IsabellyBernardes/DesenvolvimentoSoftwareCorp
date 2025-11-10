@@ -7,7 +7,7 @@ import ifpe.paokentyn.repository.TarefaRepositorio;
 import java.util.Date;
 import java.util.Calendar;
 
-public class TesteTarefa {
+public class TarefaTest {
 
     private final static TarefaRepositorio repositorio = new TarefaRepositorio();
 

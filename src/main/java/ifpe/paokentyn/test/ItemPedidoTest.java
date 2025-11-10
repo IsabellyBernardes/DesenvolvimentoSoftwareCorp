@@ -1,23 +1,23 @@
-package ifpe.paokentyn.repository;
+package ifpe.paokentyn.test;
 
 import ifpe.paokentyn.domain.ItemPedido;
 // Importações fictícias necessárias para compilar o ItemPedido
 import ifpe.paokentyn.domain.Pedido;
 import ifpe.paokentyn.domain.Pao;
-import ifpe.paokentyn.domain.Fornada;
+import ifpe.paokentyn.repository.ItemPedidoRepositorio;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * Classe de Teste para ItemPedidoRepositorio, simulando operações CRUD.
  * (Atenção: A execução real deste teste depende da implementação de EntityFactory e da configuração do JPA/Hibernate.)
  */
-public class ItemPedidoRepositorioTest {
+public class ItemPedidoTest {
 
     private ItemPedidoRepositorio repositorio;
     private Pedido pedidoMock;
