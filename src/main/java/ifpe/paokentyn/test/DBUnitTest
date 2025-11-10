@@ -22,7 +22,7 @@ public class DBUnitTest {
         IDatabaseConnection db_conn = null;
         try {
             conn = DriverManager.getConnection(
-                    "jdbc:derby://localhost:1527/exemplo_05", "app", "app");
+                    "jdbc:derby://localhost:1527/DSC", "paokentyn", "1234");
             db_conn = new DatabaseConnection(conn);
             FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
             builder.setColumnSensing(true);
