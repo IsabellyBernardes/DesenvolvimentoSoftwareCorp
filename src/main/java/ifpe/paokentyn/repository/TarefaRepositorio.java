@@ -4,10 +4,14 @@
  */
 package ifpe.paokentyn.repository;
 
+import ifpe.paokentyn.domain.Tarefa;
+
 /**
  *
  * @author tassio
  */
-public class TarefaRepositorio {
-    
+public class TarefaRepositorio extends RepositorioGenerico<Tarefa>{
+    public TarefaRepositorio() {
+        super(Tarefa.class);
+    }
 }

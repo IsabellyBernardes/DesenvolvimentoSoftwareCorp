@@ -4,10 +4,15 @@
  */
 package ifpe.paokentyn.repository;
 
+import ifpe.paokentyn.domain.Funcionario;
+
 /**
  *
  * @author tassio
  */
-public class FuncionarioRepositorio {
+public class FuncionarioRepositorio extends RepositorioGenerico<Funcionario>{
     
+    public FuncionarioRepositorio() {
+        super(Funcionario.class);
+    }
 }

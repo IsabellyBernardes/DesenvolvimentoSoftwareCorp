@@ -1,2 +1,18 @@
-C:\Users\Samsung\Desktop\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\TesteJPA.java
-C:\Users\Samsung\Desktop\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\Usuario.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\domain\Fornada.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\domain\Funcionario.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\domain\ItemPedido.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\domain\Padaria.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\domain\Pao.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\domain\Pedido.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\domain\Tarefa.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\factory\EntityFactory.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\FornadaRepositorio.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\FuncionarioRepositorio.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\ItemPedidoRepositorio.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\PadariaRepositorio.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\PaoRepositorio.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\PedidoRepositorio.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\Repositorio.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\RepositorioGenerico.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\repository\TarefaRepositorio.java
+C:\Users\Samsung\OneDrive\Faculdade e Carreira\Faculdade 2025.2\Desenvolvimento de Software Corporativo\PaoKentyn\src\main\java\ifpe\paokentyn\test\TestePadaria.java

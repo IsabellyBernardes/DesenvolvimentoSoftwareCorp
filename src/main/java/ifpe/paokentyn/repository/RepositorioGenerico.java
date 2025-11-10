@@ -1,7 +1,6 @@
 package ifpe.paokentyn.repository;
 
 import ifpe.paokentyn.factory.EntityFactory;
-import ifpe.paokentyn.repository.Repositorio;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;

@@ -4,10 +4,15 @@
  */
 package ifpe.paokentyn.repository;
 
+import ifpe.paokentyn.domain.Pedido;
+
 /**
  *
  * @author tassio
  */
-public class PedidoRepositorio {
+public class PedidoRepositorio extends RepositorioGenerico<Pedido>{
     
+    public PedidoRepositorio() {
+        super(Pedido.class);
+    }
 }

@@ -4,10 +4,15 @@
  */
 package ifpe.paokentyn.repository;
 
+import ifpe.paokentyn.domain.Fornada;
+
 /**
  *
  * @author tassio
  */
-public class FornadaRepositorio {
+public class FornadaRepositorio extends RepositorioGenerico<Fornada>{
     
+    public FornadaRepositorio() {
+        super(Fornada.class);
+    }
 }
