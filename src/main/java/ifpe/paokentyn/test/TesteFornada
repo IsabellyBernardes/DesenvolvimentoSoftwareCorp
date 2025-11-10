@@ -83,7 +83,7 @@ public class TesteFornada {
 
     // --- Métodos Auxiliares ---
     
-    [cite_start]// Método auxiliar adaptado do material da Aula 5 [cite: 694]
+    [cite_start]// Método auxiliar adaptado 
     private static Date getData(int dia, int mes, int ano) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, ano);
