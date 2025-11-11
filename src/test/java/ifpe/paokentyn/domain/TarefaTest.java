@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Date; // Para o teste de persistência
+import java.util.Date; 
 
 public class TarefaTest {
 
@@ -51,7 +51,7 @@ public class TarefaTest {
         }
     }
 
-    // --- Nossos testes começam aqui ---
+    
 
     @Test
     public void testEncontrarTarefaDoDataSet() {
@@ -82,7 +82,7 @@ public class TarefaTest {
     public void testPersistirTarefa() {
         System.out.println("--- Executando testPersistirTarefa ---");
 
-        // 1. PRECISAMOS DE UM FUNCIONÁRIO (o dono do relacionamento)
+        
         // Buscamos o funcionário 201 que o DBUnit inseriu
         Funcionario funcExistente = em.find(Funcionario.class, 201L); 
         assertNotNull(funcExistente, "Funcionário 201 (do dataset) não foi encontrado");
