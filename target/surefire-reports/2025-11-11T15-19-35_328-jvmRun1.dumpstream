@@ -1,0 +1,102 @@
+# Created at 2025-11-11T15:19:35.896
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Fine]: server: 2025-11-11 15:19:35.793--Thread(Thread[main,5,main])--Configured server platform: org.eclipse.persistence.platform.server.NoServerPlatform'.
+
+# Created at 2025-11-11T15:19:35.912
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.896--ServerSession(2023938592)--Thread(Thread[main,5,main])--The access type for the persistent class [class ifpe.paokentyn.domain.Fornada] is set to [FIELD].'.
+
+# Created at 2025-11-11T15:19:35.920
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.911--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the many to one mapping element [field padaria] is being defaulted to: class ifpe.paokentyn.domain.Padaria.'.
+
+# Created at 2025-11-11T15:19:35.920
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.919--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the one to many mapping element [field itensPedidos] is being defaulted to: class ifpe.paokentyn.domain.ItemPedido.'.
+
+# Created at 2025-11-11T15:19:35.921
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.92--ServerSession(2023938592)--Thread(Thread[main,5,main])--The access type for the persistent class [class ifpe.paokentyn.domain.Pedido] is set to [FIELD].'.
+
+# Created at 2025-11-11T15:19:35.922
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.92--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the one to many mapping element [field itens] is being defaulted to: class ifpe.paokentyn.domain.ItemPedido.'.
+
+# Created at 2025-11-11T15:19:35.923
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.921--ServerSession(2023938592)--Thread(Thread[main,5,main])--The access type for the persistent class [class ifpe.paokentyn.domain.Tarefa] is set to [FIELD].'.
+
+# Created at 2025-11-11T15:19:35.923
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.921--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the many to one mapping element [field funcionario] is being defaulted to: class ifpe.paokentyn.domain.Funcionario.'.
+
+# Created at 2025-11-11T15:19:35.924
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.922--ServerSession(2023938592)--Thread(Thread[main,5,main])--The access type for the persistent class [class ifpe.paokentyn.domain.ItemPedido] is set to [FIELD].'.
+
+# Created at 2025-11-11T15:19:35.925
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.922--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the many to one mapping element [field fornada] is being defaulted to: class ifpe.paokentyn.domain.Fornada.'.
+
+# Created at 2025-11-11T15:19:35.926
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.922--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the many to one mapping element [field pedido] is being defaulted to: class ifpe.paokentyn.domain.Pedido.'.
+
+# Created at 2025-11-11T15:19:35.927
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.923--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the many to one mapping element [field pao] is being defaulted to: class ifpe.paokentyn.domain.Pao.'.
+
+# Created at 2025-11-11T15:19:35.927
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.923--ServerSession(2023938592)--Thread(Thread[main,5,main])--The access type for the persistent class [class ifpe.paokentyn.domain.Funcionario] is set to [FIELD].'.
+
+# Created at 2025-11-11T15:19:35.928
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.923--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the many to one mapping element [field padaria] is being defaulted to: class ifpe.paokentyn.domain.Padaria.'.
+
+# Created at 2025-11-11T15:19:35.929
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.923--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the one to many mapping element [field tarefas] is being defaulted to: class ifpe.paokentyn.domain.Tarefa.'.
+
+# Created at 2025-11-11T15:19:35.929
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.923--ServerSession(2023938592)--Thread(Thread[main,5,main])--The access type for the persistent class [class ifpe.paokentyn.domain.Padaria] is set to [FIELD].'.
+
+# Created at 2025-11-11T15:19:35.930
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.923--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the one to many mapping element [field fornadas] is being defaulted to: class ifpe.paokentyn.domain.Fornada.'.
+
+# Created at 2025-11-11T15:19:35.931
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.924--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the one to many mapping element [field funcionarios] is being defaulted to: class ifpe.paokentyn.domain.Funcionario.'.
+
+# Created at 2025-11-11T15:19:35.932
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.924--ServerSession(2023938592)--Thread(Thread[main,5,main])--The access type for the persistent class [class ifpe.paokentyn.domain.Pao] is set to [FIELD].'.
+
+# Created at 2025-11-11T15:19:35.933
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.924--ServerSession(2023938592)--Thread(Thread[main,5,main])--The target entity (reference) class for the one to many mapping element [field itensPedidos] is being defaulted to: class ifpe.paokentyn.domain.ItemPedido.'.
+
+# Created at 2025-11-11T15:19:35.940
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.925--ServerSession(2023938592)--Thread(Thread[main,5,main])--The alias name for the entity class [class ifpe.paokentyn.domain.Fornada] is being defaulted to: Fornada.'.
+
+# Created at 2025-11-11T15:19:35.941
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.94--ServerSession(2023938592)--Thread(Thread[main,5,main])--The column name for element [id] is being defaulted to: ID.'.
+
+# Created at 2025-11-11T15:19:35.942
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.941--ServerSession(2023938592)--Thread(Thread[main,5,main])--The alias name for the entity class [class ifpe.paokentyn.domain.Pedido] is being defaulted to: Pedido.'.
+
+# Created at 2025-11-11T15:19:35.943
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.941--ServerSession(2023938592)--Thread(Thread[main,5,main])--The column name for element [id] is being defaulted to: ID.'.
+
+# Created at 2025-11-11T15:19:35.944
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.941--ServerSession(2023938592)--Thread(Thread[main,5,main])--The alias name for the entity class [class ifpe.paokentyn.domain.Tarefa] is being defaulted to: Tarefa.'.
+
+# Created at 2025-11-11T15:19:35.944
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.941--ServerSession(2023938592)--Thread(Thread[main,5,main])--The column name for element [id] is being defaulted to: ID.'.
+
+# Created at 2025-11-11T15:19:35.945
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.942--ServerSession(2023938592)--Thread(Thread[main,5,main])--The alias name for the entity class [class ifpe.paokentyn.domain.ItemPedido] is being defaulted to: ItemPedido.'.
+
+# Created at 2025-11-11T15:19:35.946
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.942--ServerSession(2023938592)--Thread(Thread[main,5,main])--The column name for element [id] is being defaulted to: ID.'.
+
+# Created at 2025-11-11T15:19:35.946
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.942--ServerSession(2023938592)--Thread(Thread[main,5,main])--The alias name for the entity class [class ifpe.paokentyn.domain.Funcionario] is being defaulted to: Funcionario.'.
+
+# Created at 2025-11-11T15:19:35.947
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.942--ServerSession(2023938592)--Thread(Thread[main,5,main])--The column name for element [id] is being defaulted to: ID.'.
+
+# Created at 2025-11-11T15:19:35.947
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.943--ServerSession(2023938592)--Thread(Thread[main,5,main])--The alias name for the entity class [class ifpe.paokentyn.domain.Padaria] is being defaulted to: Padaria.'.
+
+# Created at 2025-11-11T15:19:35.948
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.943--ServerSession(2023938592)--Thread(Thread[main,5,main])--The column name for element [id] is being defaulted to: ID.'.
+
+# Created at 2025-11-11T15:19:35.949
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.943--ServerSession(2023938592)--Thread(Thread[main,5,main])--The alias name for the entity class [class ifpe.paokentyn.domain.Pao] is being defaulted to: Pao.'.
+
+# Created at 2025-11-11T15:19:36.256
+Corrupted channel by directly writing to native stream in forked JVM 1. Stream '[EL Config]: metadata: 2025-11-11 15:19:35.943--ServerSession(2023938592)--Thread(Thread[main,5,main])--The column name for element [id] is being defaulted to: ID.'.
+

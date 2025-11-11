@@ -1,0 +1,9 @@
+ifpe\paokentyn\domain\TarefaTest.class
+ifpe\paokentyn\main\TesteConexaoPadariaTest.class
+ifpe\paokentyn\domain\ItemPedidoTest.class
+ifpe\paokentyn\domain\PedidoTest.class
+ifpe\paokentyn\domain\FuncionarioTest.class
+ifpe\paokentyn\domain\PaoTest.class
+ifpe\paokentyn\util\DbUnitUtil.class
+ifpe\paokentyn\domain\FornadaTest.class
+ifpe\paokentyn\domain\PadariaTest.class
