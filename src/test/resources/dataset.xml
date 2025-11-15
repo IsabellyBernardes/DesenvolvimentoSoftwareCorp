@@ -20,7 +20,7 @@
     <TB_TAREFA ID_FUNCIONARIO="1"
                TXT_DESCRICAO="Checar estoque de farinha"
                DT_INICIO="2025-11-10 08:00:00"
-               DT_PREVISAO="2025-11-15 12:00:00"
+               DT_PREVISAO="2025-11-25 12:00:00"
                FLG_CONCLUIDA="false"/>
 
     <TB_PEDIDO NUM_VALOR_TOTAL="70.00" 
