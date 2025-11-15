@@ -20,8 +20,11 @@ public class Padaria {
     @Column(name = "TXT_CEP", length = 9)
     private String cep;
     
-    @Column(name = "TXT_ENDERECO", length = 500)
-    private String endereco;
+    // NOVO CAMPO: CNPJ 
+    @NotBlank
+    @Size(min = 14, max = 14)
+    @Column(name = "TXT_CNPJ", length = 14, nullable = false, unique = true)
+    private String cnpj;
     
     @OneToMany(mappedBy = "padaria", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Funcionario> funcionarios;
@@ -36,13 +39,8 @@ public class Padaria {
     public void setNome(String nome) { this.nome = nome; }
     public String getCep() { return cep; }
     public void setCep(String cep) { this.cep = cep; }
-    public String getEndereco() {
-        return endereco;
-    }
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-    
+    public String getCnpj() { return cnpj; }
+    public void setCnpj(String cnpj) { this.cnpj = cnpj; }
     
     // Métodos de Coleção 
     public List<Funcionario> getFuncionarios() { return funcionarios; }
@@ -50,4 +48,3 @@ public class Padaria {
     public List<Fornada> getFornadas() { return fornadas; }
     public void setFornadas(List<Fornada> fornadas) { this.fornadas = fornadas; }
 }
-
