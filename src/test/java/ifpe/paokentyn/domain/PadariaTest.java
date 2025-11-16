@@ -1,4 +1,4 @@
-package ifpe.paokentyn.test;
+package ifpe.paokentyn.domain;
 
 import ifpe.paokentyn.domain.Padaria; 
 import ifpe.paokentyn.util.DbUnitUtil; 
@@ -12,89 +12,97 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PadariaTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(PadariaTest.class);
 
     private static EntityManagerFactory emf;
     private EntityManager em;
     private EntityTransaction et;
     
-    // CNPJ de exemplo p/ teste de persistência
     private final static String CNPJ_NOVO_TESTE = "11223344000199"; 
-    // CNPJ esperado do registro 101 no dataset 
     private final static String CNPJ_DATASET = "99887766000199"; 
 
     @BeforeAll
     public static void setUpClass() {
-        // Inicializa o gerenciador de entidades (EntityManagerFactory)
+        logger.info("Inicializando EntityManagerFactory...");
         emf = Persistence.createEntityManagerFactory("DSC");
+        logger.info("EntityManagerFactory inicializado.");
     }
 
     @AfterAll
     public static void tearDownClass() {
-        // Fecha o gerenciador de entidades
+        logger.info("Finalizando EntityManagerFactory...");
         if (emf != null) {
             emf.close();
         }
+        logger.info("EntityManagerFactory fechado.");
     }
 
     @BeforeEach
     public void setUp() {
-        // Carrega o dataset.xml 
+        logger.info("Carregando dataset.xml via DbUnit...");
         DbUnitUtil.insertData();
         
-        // Inicia o contexto de persistência
+        logger.info("Criando EntityManager e iniciando transação...");
         em = emf.createEntityManager();
         et = em.getTransaction();
         et.begin();
+        logger.info("Transação iniciada.");
     }
 
     @AfterEach
     public void tearDown() {
-        // Finaliza a transação com commit
+        logger.info("Finalizando transação e fechando EntityManager...");
+        
         if (et != null && et.isActive()) {
             et.commit();
+            logger.info("Transação commitada.");
         }
-        // Fecha o EntityManager
         if (em != null) {
             em.close();
+            logger.info("EntityManager fechado.");
         }
     }
 
     @Test
     public void testPersistirPadaria() {
-        System.out.println("--- Executando testPersistirPadaria (independente) ---");
+        logger.info("--- Executando testPersistirPadaria (independente) ---");
         
         Padaria novaPadaria = new Padaria();
         novaPadaria.setNome("Pão Kentyn - Filial Agreste");
-        novaPadaria.setCep("55000000"); 
-        
-        // NOVO: Adiciona o CNPJ obrigatório para que a persistência funcione
-        novaPadaria.setCnpj(CNPJ_NOVO_TESTE); 
+        novaPadaria.setCep("55000000");
+        novaPadaria.setCnpj(CNPJ_NOVO_TESTE);
+
+        logger.info("Persistindo nova padaria: nome={}, cnpj={}", 
+            novaPadaria.getNome(), novaPadaria.getCnpj());
 
         em.persist(novaPadaria);
-        em.flush(); // Força o INSERT para o banco de dados
+        em.flush();
 
         assertNotNull(novaPadaria.getId(), "ID não deveria ser nulo após persistir");
         assertEquals(1L, novaPadaria.getId(), "O primeiro ID gerado deve ser 1");
-        // Verifica o novo campo obrigatório
-        assertEquals(CNPJ_NOVO_TESTE, novaPadaria.getCnpj(), "O CNPJ salvo deve ser o mesmo do objeto.");
+        assertEquals(CNPJ_NOVO_TESTE, novaPadaria.getCnpj());
 
-        System.out.println("Padaria persistida com ID: " + novaPadaria.getId());
+        logger.info("Padaria persistida com sucesso! ID gerado={}", novaPadaria.getId());
     }
 
     @Test
     public void testEncontrarPadariaDoDataSet() {
-        System.out.println("--- Executando testEncontrarPadariaDoDataSet (independente) ---");
+        logger.info("--- Executando testEncontrarPadariaDoDataSet (independente) ---");
         
-        // Busca o ID 101, que veio do no dataset
         Padaria padaria = em.find(Padaria.class, 101L);
-        
-        assertNotNull(padaria, "Deveria encontrar a padaria com ID 101 do dataset");
+
+        logger.info("Padaria buscada pelo ID 101 → {}", padaria);
+
+        assertNotNull(padaria);
         assertEquals("Padaria do Melhor Teste", padaria.getNome());
-        // NOVO: Verifica o CNPJ do registro 101
-        assertEquals(CNPJ_DATASET, padaria.getCnpj(), "O CNPJ recuperado deve ser o do dataset.");
-        
-        System.out.println("Padaria encontrada: " + padaria.getNome() + " | CNPJ: " + padaria.getCnpj());
+        assertEquals(CNPJ_DATASET, padaria.getCnpj());
+
+        logger.info("Padaria encontrada: nome={}, cnpj={}", 
+            padaria.getNome(), padaria.getCnpj());
     }
 }
