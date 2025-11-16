@@ -11,7 +11,7 @@
                     NUM_SALARIO="3200.00"/>
 
     <TB_PAO ID="301" TXT_NOME_PAO="Pão Integral" NUM_PRECO="5.50"/> 
-    <TB_PAO ID="302" TXT_NOME_PAO="Pão de Queijo" NUM_PRECO="3.00"/>
+    <TB_PAO ID="302" TXT_NOME_PAO="Pão de Queijo" NUM_PRECO="3.00" BIN_IMAGEM="iVBORw0KGgoAAAANSUhEUgAAAAUA..." />/>
 
     <TB_FORNADA ID="401" 
                 ID_PADARIA="101" 
