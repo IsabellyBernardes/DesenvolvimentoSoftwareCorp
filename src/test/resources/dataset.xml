@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <TB_PADARIA ID="101" 
+                TXT_NOME="Padaria do Melhor Teste" 
+                TXT_CEP="50000000"
+                TXT_CNPJ="99887766000199"/>
+
+    <TB_DADOS_BANCARIOS ID="801"
+                        TXT_BANCO="Banco Teste S.A."
+                        TXT_AGENCIA="0001"
+                        TXT_CONTA="12345-6" />
+
+    <TB_FUNCIONARIO ID="201" 
+                    ID_PADARIA="101" 
+                    TXT_NOME="João Silva" 
+                    TXT_CARGO="Padeiro Senior"
+                    DT_CONTRATACAO="2022-05-15"
+                    NUM_SALARIO="3200.00"
+                    ID_DADOS_BANCARIOS="801" />
+
+    <TB_INGREDIENTE ID="901" TXT_NOME="Farinha de Trigo"/>
+    <TB_INGREDIENTE ID="902" TXT_NOME="Ovos"/>
+    <TB_INGREDIENTE ID="903" TXT_NOME="Polvilho"/>
+
+    <TB_PAO ID="301" TXT_NOME_PAO="Pão Integral" NUM_PRECO="5.50"/> 
+    <TB_PAO ID="302" TXT_NOME_PAO="Pão de Queijo" NUM_PRECO="3.00" BIN_IMAGEM="iVBORw0KGgoAAAANSUhEUgAAAAUA..."/>
+
+    <TB_PAO_INGREDIENTE ID_PAO="301" ID_INGREDIENTE="901"/> <TB_PAO_INGREDIENTE ID_PAO="302" ID_INGREDIENTE="902"/> <TB_PAO_INGREDIENTE ID_PAO="302" ID_INGREDIENTE="903"/> <TB_FORNADA ID="401" 
+                ID_PADARIA="101" 
+                DT_FORNADA="2025-11-09" 
+                HR_INICIO="06:30:00"/>
+
+    <TB_TAREFA ID="501" 
+               ID_FUNCIONARIO="201"
+               TXT_DESCRICAO="Checar estoque de farinha"
+               DT_INICIO="2025-11-10 08:00:00"
+               DT_PREVISAO="2025-11-20 12:00:00"
+               FLG_CONCLUIDA="false"/>
+
+    <TB_PEDIDO ID="601" 
+               NUM_VALOR_TOTAL="70.00" 
+               DT_PEDIDO="2025-11-10 09:30:00"/>
+
+    <TB_ITEM_PEDIDO ID="701" 
+                    ID_PEDIDO="601" 
+                    ID_PAO="301" 
+                    ID_FORNADA="401" 
+                    NUM_QUANTIDADE="10"/>
+    
+    <TB_ITEM_PEDIDO ID="702" 
+                    ID_PEDIDO="601" 
+                    ID_PAO="302" 
+                    ID_FORNADA="401" 
+                    NUM_QUANTIDADE="5"/>
+</dataset>
