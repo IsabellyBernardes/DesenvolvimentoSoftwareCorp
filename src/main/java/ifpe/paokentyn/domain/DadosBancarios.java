@@ -75,4 +75,18 @@ public class DadosBancarios implements Serializable {
     public void setFuncionario(Funcionario funcionario) {
         this.funcionario = funcionario;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DadosBancarios)) return false;
+
+        DadosBancarios db = (DadosBancarios) o;
+        return id.equals(db.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

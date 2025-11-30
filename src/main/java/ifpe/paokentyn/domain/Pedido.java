@@ -37,6 +37,20 @@ public class Pedido {
 
     public List<ItemPedido> getItens() { return itens; }
     public void setItens(List<ItemPedido> itens) { this.itens = itens; }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Pedido)) return false;
+
+        Pedido p = (Pedido) o;
+        return id.equals(p.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
 
 

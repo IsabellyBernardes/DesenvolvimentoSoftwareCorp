@@ -57,4 +57,18 @@ public class Tarefa {
     public void setDataPrevisao(Date dataPrevisao) { this.dataPrevisao = dataPrevisao; }
     public Boolean getConcluida() { return concluida; }
     public void setConcluida(Boolean concluida) { this.concluida = concluida; }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tarefa)) return false;
+
+        Tarefa t = (Tarefa) o;
+        return id.equals(t.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

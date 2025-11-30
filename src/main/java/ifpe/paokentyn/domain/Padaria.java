@@ -45,4 +45,18 @@ public class Padaria {
     public void setFuncionarios(List<Funcionario> funcionarios) { this.funcionarios = funcionarios; }
     public List<Fornada> getFornadas() { return fornadas; }
     public void setFornadas(List<Fornada> fornadas) { this.fornadas = fornadas; }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Padaria)) return false;
+
+        Padaria p = (Padaria) o;
+        return id.equals(p.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

@@ -40,6 +40,20 @@ public class ItemPedido {
     public void setPao(Pao pao) { this.pao = pao; }
     public Fornada getFornada() { return fornada; }
     public void setFornada(Fornada fornada) { this.fornada = fornada; }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ItemPedido)) return false;
+
+        ItemPedido ip = (ItemPedido) o;
+        return id.equals(ip.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
 
 

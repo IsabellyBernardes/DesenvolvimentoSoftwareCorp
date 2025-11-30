@@ -44,4 +44,18 @@ public class Fornada {
     public List<ItemPedido> getItensPedidos() { return itensPedidos; }
     public void setItensPedidos(List<ItemPedido> itensPedidos) { this.itensPedidos = itensPedidos; }
     //;add ou removed
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Fornada)) return false;
+
+        Fornada forn = (Fornada) o;
+        return id.equals(forn.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+    
 }

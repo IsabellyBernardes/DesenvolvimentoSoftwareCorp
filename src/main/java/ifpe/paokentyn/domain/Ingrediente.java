@@ -55,4 +55,18 @@ public class Ingrediente implements Serializable {
     public void setPaes(List<Pao> paes) {
         this.paes = paes;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ingrediente)) return false;
+
+        Ingrediente ingrediente = (Ingrediente) o;
+        return id.equals(ingrediente.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
