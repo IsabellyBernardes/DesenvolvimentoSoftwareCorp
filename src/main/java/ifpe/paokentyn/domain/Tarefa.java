@@ -11,7 +11,7 @@ import java.util.Date;
 public class Tarefa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // id_tarefa PK
+    private Long id; 
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FUNCIONARIO", nullable = false, referencedColumnName = "ID")
