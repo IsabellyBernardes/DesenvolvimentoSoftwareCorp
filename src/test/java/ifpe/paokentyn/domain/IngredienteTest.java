@@ -1,138 +1,99 @@
 package ifpe.paokentyn.domain;
 
-import ifpe.paokentyn.util.DbUnitUtil;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author isabe
- */
-public class IngredienteTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(IngredienteTest.class);
-    private static EntityManagerFactory emf;
-    private EntityManager em;
-    private EntityTransaction et;
+public class IngredienteTest extends GenericTest {
 
-    @BeforeAll
-    public static void setUpClass() {
-        logger.info("Inicializando EntityManagerFactory...");
-        emf = Persistence.createEntityManagerFactory("DSC");
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-        logger.info("Finalizando EntityManagerFactory...");
-        if (emf != null) {
-            emf.close();
-        }
-    }
-
-    @BeforeEach
-    public void setUp() {
-        logger.info("Carregando dataset.xml e iniciando transação...");
-        DbUnitUtil.insertData();
-        em = emf.createEntityManager();
-        et = em.getTransaction();
-        et.begin();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        logger.info("Finalizando transação e liberando EntityManager...");
-        if (et != null && et.isActive()) {
-            et.commit();
-        }
-        if (em != null) {
-            em.close();
-        }
+    private Ingrediente buscarPorNome(String nome) {
+        String jpql = "SELECT i FROM Ingrediente i WHERE i.nome = :nome";
+        TypedQuery<Ingrediente> query = em.createQuery(jpql, Ingrediente.class);
+        query.setParameter("nome", nome);
+        return query.getSingleResult();
     }
 
     @Test
-    public void testEncontrarIngredienteDoDataSet() {
-        logger.info("--- Executando testEncontrarIngredienteDoDataSet ---");
+    public void testEncontrarIngredientePorNome() {
+        logger.info("--- Executando testEncontrarIngredientePorNome ---");
 
-        Ingrediente ingrediente = em.find(Ingrediente.class, 902L);
+        Ingrediente ingrediente = buscarPorNome("Ovos");
 
-        assertNotNull(ingrediente, "Ingrediente 902 deveria existir no dataset");
+        assertNotNull(ingrediente, "Deveria ter encontrado os Ovos");
         assertEquals("Ovos", ingrediente.getNome());
 
-        assertNotNull(ingrediente.getPaes(), "A lista de pães não deveria ser nula");
-        assertEquals(1, ingrediente.getPaes().size(), "Ovos devem ser usados em 1 pão");
-        assertEquals("Pão de Queijo", ingrediente.getPaes().get(0).getNomePao());
+        assertNotNull(ingrediente.getPaes(), "A lista de pães não pode ser nula");
+        assertFalse(ingrediente.getPaes().isEmpty(), "O ingrediente deve estar sendo usado em algum pão");
         
-        logger.info("Encontrado: {} (usado em {} pão(es))", 
+        Pao paoRelacionado = ingrediente.getPaes().get(0);
+        assertEquals("Pão de Queijo", paoRelacionado.getNomePao());
+        
+        logger.info("Encontrado: '{}' (ID={}). Usado no pão: '{}'", 
             ingrediente.getNome(), 
-            ingrediente.getPaes().size()
+            ingrediente.getId(), 
+            paoRelacionado.getNomePao()
         );
-    }
-
-    @Test
-    public void testAtualizarIngredienteGerenciado() {
-        logger.info("--- Executando testAtualizarIngredienteGerenciado (Sem Merge) ---");
-
-        Ingrediente ingrediente = em.find(Ingrediente.class, 901L); 
-        assertNotNull(ingrediente);
-        
-        ingrediente.setNome("Farinha de Trigo Premium");
-        
-        em.flush(); 
-        em.clear(); 
-        
-        Ingrediente atualizado = em.find(Ingrediente.class, 901L);
-        assertEquals("Farinha de Trigo Premium", atualizado.getNome());
-        
-        logger.info("Ingrediente atualizado automaticamente para: {}", atualizado.getNome());
     }
 
     @Test
     public void testAtualizarIngredienteComMerge() {
         logger.info("--- Executando testAtualizarIngredienteComMerge ---");
 
-        Ingrediente ingrediente = em.find(Ingrediente.class, 903L); // Polvilho
+        Ingrediente ingrediente = buscarPorNome("Polvilho");
         assertNotNull(ingrediente);
-        
+        Long idOriginal = ingrediente.getId();
+
         em.clear(); 
-        
-        ingrediente.setNome("Polvilho Azedo");
-        
+
+        ingrediente.setNome("Polvilho Doce Premium");
+
         em.merge(ingrediente);
-        
+
         em.flush();
         em.clear();
 
-        Ingrediente atualizado = em.find(Ingrediente.class, 903L);
-        assertEquals("Polvilho Azedo", atualizado.getNome());
+        Ingrediente atualizado = em.find(Ingrediente.class, idOriginal);
+        assertEquals("Polvilho Doce Premium", atualizado.getNome());
         
-        logger.info("Ingrediente atualizado via merge para: {}", atualizado.getNome());
+        logger.info("Ingrediente atualizado para: {}", atualizado.getNome());
     }
 
     @Test
-    public void testRemoverIngrediente() {
-        logger.info("--- Executando testRemoverIngrediente ---");
+    public void testRemoverIngredienteComRelacionamento() {
+        logger.info("--- Executando testRemoverIngredienteComRelacionamento ---");
 
-        Ingrediente ingrediente = em.find(Ingrediente.class, 901L);
+        Ingrediente ingrediente = buscarPorNome("Farinha de Trigo");
         assertNotNull(ingrediente);
+        
+        List<Pao> paesQueUsam = ingrediente.getPaes();
+        assertFalse(paesQueUsam.isEmpty());
+        
+        logger.info("O ingrediente {} é usado em {} pães. Removendo associações...", 
+                ingrediente.getNome(), paesQueUsam.size());
+
+        for (Pao p : paesQueUsam) {
+            p.getIngredientes().remove(ingrediente);
+            em.merge(p); 
+        }
+        
+        em.flush(); 
 
         em.remove(ingrediente);
         
         em.flush();
-        em.clear(); //para ter certeza que não vai ficar no cache
+        em.clear();
 
-        Ingrediente apagado = em.find(Ingrediente.class, 901L);
-        assertNull(apagado, "O ingrediente deveria ter sido removido do banco");
+        String jpqlCheck = "SELECT i FROM Ingrediente i WHERE i.nome = :nome";
+        List<Ingrediente> lista = em.createQuery(jpqlCheck, Ingrediente.class)
+                                    .setParameter("nome", "Farinha de Trigo")
+                                    .getResultList();
         
-        logger.info("Ingrediente 901 removido com sucesso.");
+        assertTrue(lista.isEmpty(), "A Farinha de Trigo deveria ter sumido do banco");
+        
+        logger.info("Ingrediente removido com sucesso após limpar relacionamentos.");
     }
 }

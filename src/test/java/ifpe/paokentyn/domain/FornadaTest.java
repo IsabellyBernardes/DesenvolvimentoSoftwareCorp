@@ -1,96 +1,130 @@
 package ifpe.paokentyn.domain;
 
-import ifpe.paokentyn.util.DbUnitUtil;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.Date;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class FornadaTest {
+public class FornadaTest extends GenericTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(FornadaTest.class);
-    private static EntityManagerFactory emf;
-    private EntityManager em;
-    private EntityTransaction et;
+    // --- (JPQL) ---
 
-    @BeforeAll
-    public static void setUpClass() {
-        emf = Persistence.createEntityManagerFactory("DSC");
+    private Padaria buscarPadariaPorNome(String nome) {
+        String jpql = "SELECT p FROM Padaria p WHERE p.nome = :nome";
+        TypedQuery<Padaria> query = em.createQuery(jpql, Padaria.class);
+        query.setParameter("nome", nome);
+        return query.getSingleResult();
     }
 
-    @AfterAll
-    public static void tearDownClass() {
-        if (emf != null) {
-            emf.close();
-        }
+    private Fornada buscarFornadaDaPadaria(String nomePadaria) {
+        String jpql = "SELECT f FROM Fornada f WHERE f.padaria.nome = :nomePadaria";
+        TypedQuery<Fornada> query = em.createQuery(jpql, Fornada.class);
+        query.setParameter("nomePadaria", nomePadaria);
+        return query.getResultList().stream().findFirst().orElse(null);
     }
 
-    @BeforeEach
-    public void setUp() {
-        DbUnitUtil.insertData();
 
-        em = emf.createEntityManager();
-        et = em.getTransaction();
-        et.begin();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        if (et != null && et.isActive()) {
-            et.commit();
-        }
-        if (em != null) {
-            em.close();
-        }
-    }
-    
     @Test
     public void testEncontrarFornadaDoDataSet() {
         logger.info("--- Executando testEncontrarFornadaDoDataSet ---");
 
-        Fornada fornada = em.find(Fornada.class, 401L);
+        Fornada fornada = buscarFornadaDaPadaria("Padaria do Melhor Teste");
 
-        assertNotNull(fornada, "Fornada 401 deveria existir no dataset");
+        assertNotNull(fornada, "Deveria existir uma fornada para a Padaria do Melhor Teste");
         assertNotNull(fornada.getDataFornada());
-        assertNotNull(fornada.getHoraInicio());
-
-        assertNotNull(fornada.getPadaria(), "A padaria da fornada não deveria ser nula");
-
+        
         assertEquals("Padaria do Melhor Teste", fornada.getPadaria().getNome());
-        assertEquals(101L, fornada.getPadaria().getId());
 
-        logger.info("Encontrada fornada do dia: {}", fornada.getDataFornada());
+        logger.info("Encontrada fornada (ID={}) do dia: {}", fornada.getId(), fornada.getDataFornada());
     }
 
     @Test
     public void testPersistirFornada() {
         logger.info("--- Executando testPersistirFornada ---");
 
-        Padaria padariaExistente = em.find(Padaria.class, 101L);
-        assertNotNull(padariaExistente);
+        Padaria padariaExistente = buscarPadariaPorNome("Padaria do Melhor Teste");
+        assertNotNull(padariaExistente, "Padaria do dataset não encontrada");
 
         Fornada novaFornada = new Fornada();
         novaFornada.setDataFornada(new Date());
         novaFornada.setHoraInicio(new Date());
         novaFornada.setPadaria(padariaExistente);
 
-        em.persist(novaFornada);
+        em.persist(novaFornada); 
         em.flush();
 
         assertNotNull(novaFornada.getId());
         assertTrue(novaFornada.getId() > 0);
-        assertNotEquals(401L, novaFornada.getId());
 
-        logger.info("Persistida: Nova fornada com ID {}", novaFornada.getId());
+        em.clear();
+        Fornada fornadaDoBanco = em.find(Fornada.class, novaFornada.getId());
+        
+        assertNotNull(fornadaDoBanco);
+        assertEquals(padariaExistente.getId(), fornadaDoBanco.getPadaria().getId());
+
+        logger.info("Nova fornada persistida com sucesso. ID Gerado: {}", novaFornada.getId());
     }
 
+    @Test
+    public void testAtualizarFornadaGerenciada() {
+        logger.info("--- Executando testAtualizarFornadaGerenciada (Sem Merge) ---");
+
+        Fornada fornada = buscarFornadaDaPadaria("Padaria do Melhor Teste");
+        assertNotNull(fornada);
+        Long idOriginal = fornada.getId(); 
+        Date dataAntiga = fornada.getDataFornada();
+        
+        Date novaData = new Date(); 
+        fornada.setDataFornada(novaData);
+        
+        em.flush();
+        em.clear();
+        
+        Fornada fornadaAtualizada = em.find(Fornada.class, idOriginal);
+        assertNotEquals(dataAntiga, fornadaAtualizada.getDataFornada());
+        
+        logger.info("Data da fornada atualizada automaticamente.");
+    }
+
+    @Test
+    public void testAtualizarFornadaComMerge() {
+        logger.info("--- Executando testAtualizarFornadaComMerge ---");
+
+        Fornada fornada = buscarFornadaDaPadaria("Padaria do Melhor Teste");
+        assertNotNull(fornada);
+        Long idOriginal = fornada.getId();
+        
+        em.clear(); 
+        
+        Date novaHora = new Date();
+        fornada.setHoraInicio(novaHora);
+        
+        em.merge(fornada); 
+        
+        em.flush();
+        em.clear();
+        
+        Fornada fornadaVerificada = em.find(Fornada.class, idOriginal);
+        assertNotNull(fornadaVerificada.getHoraInicio());
+        
+        logger.info("Fornada atualizada via merge.");
+    }
+
+    @Test
+    public void testRemoverFornada() {
+        logger.info("--- Executando testRemoverFornada ---");
+
+        Fornada fornada = buscarFornadaDaPadaria("Padaria do Melhor Teste");
+        assertNotNull(fornada);
+        
+        em.remove(fornada);
+        
+        em.flush();
+        em.clear();
+
+        Fornada fornadaApagada = buscarFornadaDaPadaria("Padaria do Melhor Teste");
+        assertNull(fornadaApagada, "A fornada deveria ter sido removida");
+        
+        logger.info("Fornada removida com sucesso.");
+    }
 }

@@ -1,71 +1,31 @@
 package ifpe.paokentyn.domain;
 
-import ifpe.paokentyn.util.DbUnitUtil;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Date;
 
-public class PedidoTest {
+public class PedidoTest extends GenericTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PedidoTest.class);
 
-    private static EntityManagerFactory emf;
-    private EntityManager em;
-    private EntityTransaction et;
-
-    @BeforeAll
-    public static void setUpClass() {
-        logger.info("Inicializando EntityManagerFactory para testes de Pedido...");
-        emf = Persistence.createEntityManagerFactory("DSC");
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-        logger.info("Encerrando EntityManagerFactory...");
-        if (emf != null) {
-            emf.close();
-        }
-    }
-
-    @BeforeEach
-    public void setUp() {
-        logger.info("Carregando dataset.xml e iniciando transação...");
-        DbUnitUtil.insertData();
-
-        em = emf.createEntityManager();
-        et = em.getTransaction();
-        et.begin();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        logger.info("Finalizando transação e fechando EntityManager...");
-        if (et != null && et.isActive()) {
-            et.commit();
-        }
-        if (em != null) {
-            em.close();
-        }
+    private Pedido buscarPedidoPorValor(Double valor) {
+        String jpql = "SELECT p FROM Pedido p WHERE p.valorTotal = :valor";
+        TypedQuery<Pedido> query = em.createQuery(jpql, Pedido.class);
+        query.setParameter("valor", valor);
+        return query.getResultList().stream().findFirst().orElse(null);
     }
 
 
     @Test
     public void testEncontrarPedidoDoDataSet() {
-        logger.info("--- Executando testEncontrarPedidoDoDataSet ---");
+        logger.info("--- Executando testEncontrarPedidoDoDataSet (Dinâmico) ---");
 
-        Pedido pedido = em.find(Pedido.class, 601L);
+        Pedido pedido = buscarPedidoPorValor(70.00);
 
-        assertNotNull(pedido, "Pedido 601 deveria existir no dataset");
+        assertNotNull(pedido, "Pedido de valor 70.00 deveria existir no dataset");
         assertEquals(70.00, pedido.getValorTotal());
 
         logger.info("Pedido encontrado no dataset: id={}, valor={}",
@@ -87,8 +47,66 @@ public class PedidoTest {
         em.flush();
 
         assertTrue(novoPedido.getId() > 0, "ID deve ser positivo");
-        assertNotEquals(601L, novoPedido.getId(), "ID não deve ser o mesmo do dataset");
+        
+        Pedido pedidoDataset = buscarPedidoPorValor(70.00);
+        assertNotEquals(pedidoDataset.getId(), novoPedido.getId(), "ID não deve ser o mesmo do dataset");
 
         logger.info("Novo pedido persistido com sucesso: id={}", novoPedido.getId());
+    }
+
+    @Test
+    public void testAtualizarPedidoComMerge() {
+        logger.info("--- Executando testAtualizarPedidoComMerge ---");
+
+        Pedido pedido = buscarPedidoPorValor(70.00);
+        assertNotNull(pedido);
+        Long idOriginal = pedido.getId();
+        Double valorAntigo = pedido.getValorTotal();
+
+        em.clear(); 
+
+        pedido.setValorTotal(99.90); 
+
+        em.merge(pedido); 
+
+        em.flush();
+        em.clear();
+
+        Pedido pedidoAtualizado = em.find(Pedido.class, idOriginal);
+        assertEquals(99.90, pedidoAtualizado.getValorTotal());
+        assertNotEquals(valorAntigo, pedidoAtualizado.getValorTotal());
+
+        logger.info("Pedido atualizado: valor mudou de {} para {}", 
+                valorAntigo, pedidoAtualizado.getValorTotal());
+    }
+
+    @Test
+    public void testRemoverPedidoEItens() {
+        logger.info("--- Executando testRemoverPedidoEItens ---");
+
+        Pedido pedido = buscarPedidoPorValor(70.00);
+        assertNotNull(pedido);
+        
+        assertFalse(pedido.getItens().isEmpty(), "O pedido deveria ter itens associados");
+        Long idItem1 = pedido.getItens().get(0).getId();
+        Long idItem2 = pedido.getItens().size() > 1 ? pedido.getItens().get(1).getId() : null;
+
+        logger.info("Removendo Pedido ID={}. Itens esperados para remoção: {}, {}", 
+                pedido.getId(), idItem1, idItem2);
+
+        em.remove(pedido); 
+
+        em.flush();
+        em.clear();
+
+        Pedido pedidoApagado = buscarPedidoPorValor(70.00);
+        assertNull(pedidoApagado, "O pedido deveria ter sido removido");
+
+        assertNull(em.find(ItemPedido.class, idItem1), "O item 1 deveria ter sido removido em cascata");
+        if (idItem2 != null) {
+            assertNull(em.find(ItemPedido.class, idItem2), "O item 2 deveria ter sido removido em cascata");
+        }
+
+        logger.info("Pedido e seus itens removidos com sucesso.");
     }
 }
