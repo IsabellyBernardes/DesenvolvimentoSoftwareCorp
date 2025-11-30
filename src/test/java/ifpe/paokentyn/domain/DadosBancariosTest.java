@@ -12,7 +12,6 @@ public class DadosBancariosTest extends GenericTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DadosBancariosTest.class);
 
-    // --- (JPQL) ---
     private DadosBancarios buscarPorConta(String conta) {
         String jpql = "SELECT d FROM DadosBancarios d WHERE d.conta = :conta";
         TypedQuery<DadosBancarios> query = em.createQuery(jpql, DadosBancarios.class);
@@ -47,18 +46,14 @@ public class DadosBancariosTest extends GenericTest {
     public void testAtualizarDadosGerenciados() {
         logger.info("--- Executando testAtualizarDadosGerenciados ---");
 
-        // 1. Busca pela conta original
         DadosBancarios dados = buscarPorConta("12345-6");
         assertNotNull(dados);
 
-        // 2. Altera o objeto gerenciado (Managed)
         dados.setBanco("Banco Digital Nubank");
 
-        // 3. Sincroniza
         em.flush();
         em.clear();
 
-        // 4. Verifica se atualizou
         DadosBancarios dadosAtualizados = buscarPorConta("12345-6");
         assertEquals("Banco Digital Nubank", dadosAtualizados.getBanco());
 
@@ -69,25 +64,19 @@ public class DadosBancariosTest extends GenericTest {
     public void testAtualizarDadosComMerge() {
         logger.info("--- Executando testAtualizarDadosComMerge ---");
 
-        // 1. Busca pela conta original
         DadosBancarios dados = buscarPorConta("12345-6");
         assertNotNull(dados);
-        Long idOriginal = dados.getId(); // Guarda o ID gerado pelo banco para conferir depois
+        Long idOriginal = dados.getId(); 
 
-        // 2. Desanexa (Detached)
         em.clear();
 
-        // 3. Modifica (Detached) - Mudando a própria chave de busca (Conta)
         dados.setConta("99999-X");
-
-        // 4. Merge
+        
         em.merge(dados);
 
-        // 5. Sincroniza
         em.flush();
         em.clear();
 
-        // 6. Verifica buscando pela NOVA conta
         DadosBancarios dadosAtualizados = buscarPorConta("99999-X");
         assertEquals(idOriginal, dadosAtualizados.getId(), "O ID deve ser o mesmo");
         assertEquals("99999-X", dadosAtualizados.getConta());
@@ -99,26 +88,19 @@ public class DadosBancariosTest extends GenericTest {
     public void testRemoverDadosBancarios() {
         logger.info("--- Executando testRemoverDadosBancarios ---");
 
-        // 1. Busca dinâmica
         DadosBancarios dados = buscarPorConta("12345-6");
         assertNotNull(dados);
 
-        // 2. PREPARAÇÃO: Desvincular do Funcionário (Dono)
-        // Importante: O Funcionário tem a FK. Se deletarmos os dados sem limpar a FK dele, o banco reclama.
         Funcionario dono = dados.getFuncionario();
         dono.setDadosBancarios(null);
 
-        // Força o update do funcionário (FK = null) ANTES de apagar a conta
         em.flush();
 
-        // 3. Remove a conta
         em.remove(dados);
 
-        // 4. Sincroniza
         em.flush();
         em.clear();
 
-        // 5. Verifica se sumiu (A query deve retornar vazio)
         String jpqlCheck = "SELECT d FROM DadosBancarios d WHERE d.conta = :conta";
         var lista = em.createQuery(jpqlCheck, DadosBancarios.class)
                 .setParameter("conta", "12345-6")
