@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package ifpe.paokentyn.domain;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -35,7 +36,6 @@ public class DadosBancarios implements Serializable {
     private Funcionario funcionario;
 
     // --- Getters e Setters ---
-    
     public Long getId() {
         return id;
     }
@@ -75,18 +75,22 @@ public class DadosBancarios implements Serializable {
     public void setFuncionario(Funcionario funcionario) {
         this.funcionario = funcionario;
     }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DadosBancarios)) return false;
 
-        DadosBancarios db = (DadosBancarios) o;
-        return id.equals(db.id);
-    }
-    
     @Override
     public int hashCode() {
-        return id.hashCode();
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof DadosBancarios)) {
+            return false;
+        }
+
+        DadosBancarios other = (DadosBancarios) object;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 }

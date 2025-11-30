@@ -39,17 +39,21 @@ public class Pedido {
     public void setItens(List<ItemPedido> itens) { this.itens = itens; }
     
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Pedido)) return false;
-
-        Pedido p = (Pedido) o;
-        return id.equals(p.id);
-    }
-    
-    @Override
     public int hashCode() {
-        return id.hashCode();
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Pedido)) {
+            return false;
+        }
+
+        Pedido other = (Pedido) object;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 }
 

@@ -17,7 +17,14 @@ public class PaoTest extends GenericTest {
         query.setParameter("nome", nome);
         return query.getSingleResult();
     }
-    
+
+    private Pao buscarPaoPorId(int id) {
+        String jpql = "SELECT p FROM Pao p WHERE p.id = :id";
+        TypedQuery<Pao> query = em.createQuery(jpql, Pao.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
+
     private ItemPedido buscarItemPorNomeDoPao(String nomePao) {
         String jpql = "SELECT i FROM ItemPedido i WHERE i.pao.nomePao = :nomePao";
         TypedQuery<ItemPedido> query = em.createQuery(jpql, ItemPedido.class);
@@ -37,12 +44,12 @@ public class PaoTest extends GenericTest {
 
         assertNotNull(pao.getIngredientes(), "A lista de ingredientes não deveria ser nula");
         assertEquals(2, pao.getIngredientes().size(), "Pão de Queijo deve ter 2 ingredientes");
-        
+
         boolean achouOvos = pao.getIngredientes().stream()
-                                .anyMatch(ing -> ing.getNome().equals("Ovos"));
+                .anyMatch(ing -> ing.getNome().equals("Ovos"));
         boolean achouPolvilho = pao.getIngredientes().stream()
-                                .anyMatch(ing -> ing.getNome().equals("Polvilho"));
-        
+                .anyMatch(ing -> ing.getNome().equals("Polvilho"));
+
         assertTrue(achouOvos, "Deveria ter encontrado Ovos na lista");
         assertTrue(achouPolvilho, "Deveria ter encontrado Polvilho na lista");
 
@@ -55,25 +62,25 @@ public class PaoTest extends GenericTest {
 
         Ingrediente novoIngrediente = new Ingrediente();
         novoIngrediente.setNome("Fermento Biológico");
-        
+
         Pao novoPao = new Pao();
         novoPao.setNomePao("Pão Francês");
         novoPao.setPreco(0.75);
-        
+
         novoPao.setIngredientes(List.of(novoIngrediente));
 
-        em.persist(novoIngrediente); 
+        em.persist(novoIngrediente);
         em.persist(novoPao);
-        em.flush(); 
+        em.flush();
 
         assertNotNull(novoPao.getId(), "ID do novo pão não pode ser nulo");
         assertNotNull(novoIngrediente.getId(), "ID do novo ingrediente não pode ser nulo");
-        
+
         Pao paoDoDataset = buscarPaoPorNome("Pão de Queijo");
         assertNotEquals(paoDoDataset.getId(), novoPao.getId());
 
-        em.clear(); 
-        
+        em.clear();
+
         Pao paoDoBanco = em.find(Pao.class, novoPao.getId());
         assertEquals(1, paoDoBanco.getIngredientes().size());
         assertEquals("Fermento Biológico", paoDoBanco.getIngredientes().get(0).getNome());
@@ -88,23 +95,23 @@ public class PaoTest extends GenericTest {
         Pao pao = buscarPaoPorNome("Pão de Queijo");
         assertNotNull(pao);
         Long idOriginal = pao.getId();
-        
+
         Ingrediente sal = new Ingrediente();
         sal.setNome("Sal");
         em.persist(sal);
 
-        pao.getIngredientes().add(sal); 
-        
+        pao.getIngredientes().add(sal);
+
         em.flush();
         em.clear();
-        
+
         Pao paoAtualizado = em.find(Pao.class, idOriginal);
         assertEquals(3, paoAtualizado.getIngredientes().size(), "Agora deve ter 3 ingredientes");
-        
+
         boolean achouSal = paoAtualizado.getIngredientes().stream()
                 .anyMatch(ing -> ing.getNome().equals("Sal"));
         assertTrue(achouSal, "Sal deveria estar na lista");
-        
+
         logger.info("Pão atualizado com sucesso.");
     }
 
@@ -114,45 +121,58 @@ public class PaoTest extends GenericTest {
 
         Pao pao = buscarPaoPorNome("Pão Integral");
         assertNotNull(pao);
-        
+
         Ingrediente ing = pao.getIngredientes().get(0);
         Long idIngrediente = ing.getId();
-        
-        em.remove(pao); 
-        
+
+        em.remove(pao);
+
         em.flush();
         em.clear();
-        
+
         String jpqlCheck = "SELECT p FROM Pao p WHERE p.nomePao = :nome";
         List<Pao> lista = em.createQuery(jpqlCheck, Pao.class)
-                            .setParameter("nome", "Pão Integral")
-                            .getResultList();
+                .setParameter("nome", "Pão Integral")
+                .getResultList();
         assertTrue(lista.isEmpty());
-        
+
         Ingrediente ingredienteSobrevivente = em.find(Ingrediente.class, idIngrediente);
         assertNotNull(ingredienteSobrevivente, "O ingrediente NÃO deveria ser apagado");
-        
+
         logger.info("Pão removido, mas ingrediente {} preservado.", ingredienteSobrevivente.getNome());
     }
-    
+
     @Test
     public void testRemoverPaoApagaItensDePedido() {
         logger.info("--- Executando testRemoverPaoApagaItensDePedido ---");
 
         Pao pao = buscarPaoPorNome("Pão Integral");
-        
+
         ItemPedido itemAntes = buscarItemPorNomeDoPao("Pão Integral");
         assertNotNull(itemAntes, "Deveria existir um item de pedido com Pão Integral");
         Long idItem = itemAntes.getId();
 
-        em.remove(pao); 
+        em.remove(pao);
 
         em.flush();
         em.clear();
 
         ItemPedido itemDepois = em.find(ItemPedido.class, idItem);
         assertNull(itemDepois, "O ItemPedido deveria ter sido apagado em cascata!");
-        
+
         logger.info("Sucesso: Ao apagar o Pão, o histórico de vendas foi apagado.");
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        logger.info("--- Executando testEqualsAndHashCode ---");
+
+        Pao p1 = buscarPaoPorId(2);
+        Pao p2 = buscarPaoPorId(3);
+        Pao p3 = buscarPaoPorId(2);
+
+        assertFalse(p1.equals(p2), "Os objetos não devem ser iguais");
+        assertTrue(p1.equals(p3), "Os objetos devem ser iguais");
+        assertEquals(p1.hashCode(), p3.hashCode(), "Hashcodes devem ser iguais");
     }
 }

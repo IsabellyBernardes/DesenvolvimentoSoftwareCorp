@@ -119,17 +119,21 @@ public class Funcionario implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Funcionario)) return false;
-
-        Funcionario func = (Funcionario) o;
-        return id.equals(func.id);
-    }
-    
-    @Override
     public int hashCode() {
-        return id.hashCode();
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Funcionario)) {
+            return false;
+        }
+
+        Funcionario other = (Funcionario) object;
+
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
 }

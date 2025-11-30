@@ -16,6 +16,13 @@ public class IngredienteTest extends GenericTest {
         query.setParameter("nome", nome);
         return query.getSingleResult();
     }
+    
+    private Ingrediente buscarPorId(int id) {
+        String jpql = "SELECT i FROM Ingrediente i WHERE i.id = :id";
+        TypedQuery<Ingrediente> query = em.createQuery(jpql, Ingrediente.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
 
     @Test
     public void testEncontrarIngredientePorNome() {
@@ -95,5 +102,18 @@ public class IngredienteTest extends GenericTest {
         assertTrue(lista.isEmpty(), "A Farinha de Trigo deveria ter sumido do banco");
         
         logger.info("Ingrediente removido com sucesso após limpar relacionamentos.");
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        logger.info("--- Executando testEqualsAndHashCode ---");
+
+        Ingrediente i1 = buscarPorId(2);
+        Ingrediente i2 = buscarPorId(3);
+        Ingrediente i3 = buscarPorId(2);
+        
+        assertFalse(i1.equals(i2), "Os objetos não devem ser iguais");
+        assertTrue(i1.equals(i3), "Os objetos devem ser iguais");
+        assertEquals(i1.hashCode(), i3.hashCode(), "Hashcodes devem ser iguais");
     }
 }

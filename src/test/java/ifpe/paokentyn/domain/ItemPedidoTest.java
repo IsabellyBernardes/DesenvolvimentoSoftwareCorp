@@ -18,6 +18,13 @@ public class ItemPedidoTest extends GenericTest {
         query.setParameter("nomePao", nomePao);
         return query.getResultList().stream().findFirst().orElse(null);
     }
+    
+    private ItemPedido buscarItemPorId(int id) {
+        String jpql = "SELECT i FROM ItemPedido i WHERE i.id = :id";
+        TypedQuery<ItemPedido> query = em.createQuery(jpql, ItemPedido.class);
+        query.setParameter("id", id);
+        return query.getResultList().stream().findFirst().orElse(null);
+    }
 
     private Pedido buscarPedidoPorValor(Double valor) {
         String jpql = "SELECT p FROM Pedido p WHERE p.valorTotal = :valor";
@@ -138,5 +145,18 @@ public class ItemPedidoTest extends GenericTest {
         assertNotNull(em.find(Pao.class, idPao), "O Pão não deveria ser apagado");
         
         logger.info("ItemPedido removido com sucesso, pais intactos.");
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        logger.info("--- Executando testEqualsAndHashCode ---");
+
+        ItemPedido ip1 = buscarItemPorId(2);
+        ItemPedido ip2 = buscarItemPorId(3);
+        ItemPedido ip3 = buscarItemPorId(2);
+
+        assertFalse(ip1.equals(ip2), "Os objetos não devem ser iguais");
+        assertTrue(ip1.equals(ip3), "Os objetos devem ser iguais");
+        assertEquals(ip1.hashCode(), ip3.hashCode(), "Hashcodes devem ser iguais");
     }
 }

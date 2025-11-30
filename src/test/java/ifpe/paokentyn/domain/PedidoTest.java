@@ -17,6 +17,13 @@ public class PedidoTest extends GenericTest {
         query.setParameter("valor", valor);
         return query.getResultList().stream().findFirst().orElse(null);
     }
+    
+    private Pedido buscarPedidoPorId(int id) {
+        String jpql = "SELECT p FROM Pedido p WHERE p.id = :id";
+        TypedQuery<Pedido> query = em.createQuery(jpql, Pedido.class);
+        query.setParameter("id", id);
+        return query.getResultList().stream().findFirst().orElse(null);
+    }
 
 
     @Test
@@ -108,5 +115,18 @@ public class PedidoTest extends GenericTest {
         }
 
         logger.info("Pedido e seus itens removidos com sucesso.");
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        logger.info("--- Executando testEqualsAndHashCode ---");
+
+        Pedido p1 = buscarPedidoPorId(2);
+        Pedido p2 = buscarPedidoPorId(3);
+        Pedido p3 = buscarPedidoPorId(2);
+
+        assertFalse(p1.equals(p2), "Os objetos não devem ser iguais");
+        assertTrue(p1.equals(p3), "Os objetos devem ser iguais");
+        assertEquals(p1.hashCode(), p3.hashCode(), "Hashcodes devem ser iguais");
     }
 }

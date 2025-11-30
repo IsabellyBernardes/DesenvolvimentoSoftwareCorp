@@ -17,6 +17,13 @@ public class TarefaTest extends GenericTest {
         query.setParameter("descricao", descricao);
         return query.getSingleResult();
     }
+    
+    private Tarefa buscarTarefaPorId(int id) {
+        String jpql = "SELECT t FROM Tarefa t WHERE t.id = :id";
+        TypedQuery<Tarefa> query = em.createQuery(jpql, Tarefa.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
 
     private Funcionario buscarFuncionarioPorNome(String nome) {
         String jpql = "SELECT f FROM Funcionario f WHERE f.nome = :nome";
@@ -123,5 +130,18 @@ public class TarefaTest extends GenericTest {
         assertNotNull(em.find(Funcionario.class, idFuncionario), "O funcionário NÃO deve ser removido");
 
         logger.info("Tarefa removida com sucesso.");
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        logger.info("--- Executando testEqualsAndHashCode ---");
+
+        Tarefa t1 = buscarTarefaPorId(2);
+        Tarefa t2 = buscarTarefaPorId(3);
+        Tarefa t3 = buscarTarefaPorId(2);
+
+        assertFalse(t1.equals(t2), "Os objetos não devem ser iguais");
+        assertTrue(t1.equals(t3), "Os objetos devem ser iguais");
+        assertEquals(t1.hashCode(), t3.hashCode(), "Hashcodes devem ser iguais");
     }
 }

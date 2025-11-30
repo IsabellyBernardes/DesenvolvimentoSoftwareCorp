@@ -17,6 +17,13 @@ public class FuncionarioTest extends GenericTest {
         query.setParameter("nome", nome);
         return query.getSingleResult();
     }
+    
+    private Funcionario buscarFuncionarioPorId(int id) {
+        String jpql = "SELECT f FROM Funcionario f WHERE f.id = :id";
+        TypedQuery<Funcionario> query = em.createQuery(jpql, Funcionario.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
 
     private Padaria buscarPadariaPorNome(String nome) {
         String jpql = "SELECT p FROM Padaria p WHERE p.nome = :nome";
@@ -144,5 +151,18 @@ public class FuncionarioTest extends GenericTest {
         assertNull(em.find(Tarefa.class, idTarefa), "Tarefas deveriam ter sido apagadas");
         
         logger.info("Funcionário e dependências removidos com sucesso.");
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        logger.info("--- Executando testEqualsAndHashCode ---");
+
+        Funcionario f1 = buscarFuncionarioPorId(2);
+        Funcionario f2 = buscarFuncionarioPorId(3);
+        Funcionario f3 = buscarFuncionarioPorId(2);
+
+        assertFalse(f1.equals(f2), "Os objetos não devem ser iguais");
+        assertTrue(f1.equals(f3), "Os objetos devem ser iguais");
+        assertEquals(f1.hashCode(), f3.hashCode(), "Hashcodes devem ser iguais");
     }
 }

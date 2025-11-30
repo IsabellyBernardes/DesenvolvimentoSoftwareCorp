@@ -3,10 +3,26 @@
     <TB_PADARIA TXT_NOME="Padaria do Melhor Teste" 
                 TXT_CEP="50000000"
                 TXT_CNPJ="99887766000199"/>
+    
+    <TB_PADARIA TXT_NOME="Padaria do Melhor Teste 2" 
+                TXT_CEP="55555555"
+                TXT_CNPJ="99999999000199"/>
+    
+    <TB_PADARIA TXT_NOME="Padaria do Melhor Teste 3" 
+                TXT_CEP="55555555"
+                TXT_CNPJ="88888888000188"/>
 
     <TB_DADOS_BANCARIOS TXT_BANCO="Banco Teste S.A."
                         TXT_AGENCIA="0001"
                         TXT_CONTA="12345-6" />
+    
+    <TB_DADOS_BANCARIOS TXT_BANCO="Banco Teste S.A. 2"
+                        TXT_AGENCIA="0002"
+                        TXT_CONTA="12345-2" />
+    
+    <TB_DADOS_BANCARIOS TXT_BANCO="Banco Teste S.A. 3"
+                        TXT_AGENCIA="0003"
+                        TXT_CONTA="12345-3" />
 
     <TB_FUNCIONARIO ID_PADARIA="1" 
                     TXT_NOME="João Silva" 
@@ -14,9 +30,25 @@
                     DT_CONTRATACAO="2022-05-15"
                     NUM_SALARIO="3200.00"
                     ID_DADOS_BANCARIOS="1" />
+    
+    <TB_FUNCIONARIO ID_PADARIA="1" 
+                    TXT_NOME="Maria Silva" 
+                    TXT_CARGO="Padeiro Pleno"
+                    DT_CONTRATACAO="2022-05-15"
+                    NUM_SALARIO="3200.00"
+                    ID_DADOS_BANCARIOS="2" />
+        
+    <TB_FUNCIONARIO ID_PADARIA="1" 
+                    TXT_NOME="Pedro Silva" 
+                    TXT_CARGO="Padeiro Junior"
+                    DT_CONTRATACAO="2022-05-15"
+                    NUM_SALARIO="3200.00"
+                    ID_DADOS_BANCARIOS="3" />
 
     <TB_PAO TXT_NOME_PAO="Pão Integral" NUM_PRECO="5.50"/> 
     <TB_PAO TXT_NOME_PAO="Pão de Queijo" NUM_PRECO="3.00" BIN_IMAGEM="..."/>
+    <TB_PAO TXT_NOME_PAO="Pão de Sal" NUM_PRECO="3.50" BIN_IMAGEM="..."/>
+
 
     <TB_INGREDIENTE TXT_NOME="Farinha de Trigo"/>
     <TB_INGREDIENTE TXT_NOME="Ovos"/>
@@ -29,14 +61,37 @@
     <TB_FORNADA ID_PADARIA="1" 
                 DT_FORNADA="2025-11-09" 
                 HR_INICIO="06:30:00"/>
+    
+    <TB_FORNADA ID_PADARIA="2" 
+                DT_FORNADA="2025-11-09" 
+                HR_INICIO="06:30:00"/>
+    
+    <TB_FORNADA ID_PADARIA="2" 
+                DT_FORNADA="2025-11-09" 
+                HR_INICIO="06:30:00"/>
 
     <TB_TAREFA ID_FUNCIONARIO="1"
                TXT_DESCRICAO="Checar estoque de farinha"
                DT_INICIO="2025-11-10 08:00:00"
                DT_PREVISAO="2025-11-20 12:00:00"
                FLG_CONCLUIDA="false"/>
+    
+    <TB_TAREFA ID_FUNCIONARIO="2"
+               TXT_DESCRICAO="Limpar lanchonete"
+               DT_INICIO="2025-11-10 08:00:00"
+               DT_PREVISAO="2025-11-20 12:00:00"
+               FLG_CONCLUIDA="false"/>
+    
+    <TB_TAREFA ID_FUNCIONARIO="3"
+               TXT_DESCRICAO="Assar pães"
+               DT_INICIO="2025-11-10 08:00:00"
+               DT_PREVISAO="2025-11-20 12:00:00"
+               FLG_CONCLUIDA="false"/>
 
     <TB_PEDIDO NUM_VALOR_TOTAL="70.00" 
+               DT_PEDIDO="2025-11-10 09:30:00"/>
+    
+    <TB_PEDIDO NUM_VALOR_TOTAL="55.00" 
                DT_PEDIDO="2025-11-10 09:30:00"/>
 
     <TB_ITEM_PEDIDO ID_PEDIDO="1" 
@@ -46,6 +101,17 @@
     
     <TB_ITEM_PEDIDO ID_PEDIDO="1" 
                     ID_PAO="2" 
+                    ID_FORNADA="1" 
+                    NUM_QUANTIDADE="5"/>
+    
+    <TB_ITEM_PEDIDO ID_PEDIDO="2" 
+                    ID_PAO="3" 
+                    ID_FORNADA="1" 
+                    NUM_QUANTIDADE="5"/>
+    
+    
+    <TB_ITEM_PEDIDO ID_PEDIDO="2" 
+                    ID_PAO="1" 
                     ID_FORNADA="1" 
                     NUM_QUANTIDADE="5"/>
 </dataset>

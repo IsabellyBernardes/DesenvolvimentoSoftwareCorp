@@ -17,6 +17,13 @@ public class PadariaTest extends GenericTest {
         query.setParameter("nome", nome);
         return query.getSingleResult();
     }
+    
+    private Padaria buscarPadariaPorId(int id) {
+        String jpql = "SELECT p FROM Padaria p WHERE p.id = :id";
+        TypedQuery<Padaria> query = em.createQuery(jpql, Padaria.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
 
     @Test
     public void testPersistirPadaria() {
@@ -110,5 +117,18 @@ public class PadariaTest extends GenericTest {
         assertNull(em.find(Fornada.class, idFornada), "Fornada removida em cascata");
 
         logger.info("Padaria e dependentes removidos com sucesso.");
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        logger.info("--- Executando testEqualsAndHashCode ---");
+
+        Padaria p1 = buscarPadariaPorId(2);
+        Padaria p2 = buscarPadariaPorId(3);
+        Padaria p3 = buscarPadariaPorId(2);
+
+        assertFalse(p1.equals(p2), "Os objetos não devem ser iguais");
+        assertTrue(p1.equals(p3), "Os objetos devem ser iguais");
+        assertEquals(p1.hashCode(), p3.hashCode(), "Hashcodes devem ser iguais");
     }
 }

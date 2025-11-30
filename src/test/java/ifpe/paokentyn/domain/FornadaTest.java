@@ -15,11 +15,18 @@ public class FornadaTest extends GenericTest {
         query.setParameter("nome", nome);
         return query.getSingleResult();
     }
-
+    
     private Fornada buscarFornadaDaPadaria(String nomePadaria) {
         String jpql = "SELECT f FROM Fornada f WHERE f.padaria.nome = :nomePadaria";
         TypedQuery<Fornada> query = em.createQuery(jpql, Fornada.class);
         query.setParameter("nomePadaria", nomePadaria);
+        return query.getResultList().stream().findFirst().orElse(null);
+    }
+    
+    private Fornada buscarFornadaPorId(int id) {
+        String jpql = "SELECT f FROM Fornada f WHERE f.id = :id";
+        TypedQuery<Fornada> query = em.createQuery(jpql, Fornada.class);
+        query.setParameter("id", id);
         return query.getResultList().stream().findFirst().orElse(null);
     }
 
@@ -126,5 +133,18 @@ public class FornadaTest extends GenericTest {
         assertNull(fornadaApagada, "A fornada deveria ter sido removida");
         
         logger.info("Fornada removida com sucesso.");
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+        logger.info("--- Executando testEqualsAndHashCode ---");
+
+        Fornada f1 = buscarFornadaPorId(2);
+        Fornada f2 = buscarFornadaPorId(3);
+        Fornada f3 = buscarFornadaPorId(2);
+                
+        assertFalse(f1.equals(f2), "Os objetos não devem ser iguais");
+        assertTrue(f1.equals(f3), "Os objetos devem ser iguais");
+        assertEquals(f1.hashCode(), f3.hashCode(), "Hashcodes devem ser iguais");
     }
 }
