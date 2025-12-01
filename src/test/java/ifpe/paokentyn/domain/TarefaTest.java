@@ -80,6 +80,27 @@ public class TarefaTest extends GenericTest {
         logger.info("Tarefa persistida: '{}' com ID: {}", 
                     novaTarefa.getDescricao(), novaTarefa.getId());
     }
+    
+    @Test
+    public void testAtualizarTarefaGerenciada() {
+        logger.info("--- Executando testAtualizarTarefaGerenciada (Sem Merge) ---");
+
+        Tarefa tarefa = buscarTarefaPorDescricao("Checar estoque de farinha");
+        assertNotNull(tarefa);
+        Long idOriginal = tarefa.getId();
+        
+        String novaDescricao = "Verificar validade da farinha";
+
+        tarefa.setDescricao(novaDescricao);
+
+        em.flush(); 
+        em.clear();
+
+        Tarefa tarefaAtualizada = em.find(Tarefa.class, idOriginal);
+        assertEquals(novaDescricao, tarefaAtualizada.getDescricao());
+        
+        logger.info("Tarefa atualizada automaticamente via Dirty Checking.");
+    }
 
     @Test
     public void testAtualizarTarefaComMerge() {

@@ -45,6 +45,25 @@ public class IngredienteTest extends GenericTest {
             paoRelacionado.getNomePao()
         );
     }
+    
+    @Test
+    public void testAtualizarIngredienteGerenciado() {
+        logger.info("--- Executando testAtualizarIngredienteGerenciado (Sem Merge) ---");
+
+        Ingrediente ingrediente = buscarPorNome("Ovos"); 
+        assertNotNull(ingrediente);
+        Long idOriginal = ingrediente.getId();
+
+        ingrediente.setNome("Ovos Orgânicos");
+
+        em.flush(); 
+        em.clear();
+
+        Ingrediente atualizado = em.find(Ingrediente.class, idOriginal);
+        assertEquals("Ovos Orgânicos", atualizado.getNome());
+
+        logger.info("Ingrediente atualizado automaticamente via Dirty Checking.");
+    }
 
     @Test
     public void testAtualizarIngredienteComMerge() {

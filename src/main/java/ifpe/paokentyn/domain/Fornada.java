@@ -43,7 +43,7 @@ public class Fornada {
      
     public List<ItemPedido> getItensPedidos() { return itensPedidos; }
     public void setItensPedidos(List<ItemPedido> itensPedidos) { this.itensPedidos = itensPedidos; }
-    //;add ou removed
+
     
     @Override
     public int hashCode() {

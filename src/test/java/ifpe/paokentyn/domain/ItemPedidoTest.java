@@ -99,6 +99,28 @@ public class ItemPedidoTest extends GenericTest {
 
         logger.info("Novo ItemPedido persistido com ID={}", novoItem.getId());
     }
+    
+    @Test
+    public void testAtualizarItemPedidoGerenciado() {
+        logger.info("--- Executando testAtualizarItemPedidoGerenciado (Sem Merge) ---");
+
+        ItemPedido item = buscarItemPorNomeDoPao("Pão Integral");
+        assertNotNull(item);
+        Long idOriginal = item.getId();
+        
+        int qtdAntiga = item.getQuantidade();
+        int novaQtd = qtdAntiga + 5;
+
+        item.setQuantidade(novaQtd);
+
+        em.flush(); 
+        em.clear(); 
+        
+        ItemPedido itemAtualizado = em.find(ItemPedido.class, idOriginal);
+        assertEquals(novaQtd, itemAtualizado.getQuantidade());
+        
+        logger.info("Quantidade atualizada via Dirty Checking: de {} para {}", qtdAntiga, novaQtd);
+    }
 
     @Test
     public void testAtualizarItemPedidoComMerge() {

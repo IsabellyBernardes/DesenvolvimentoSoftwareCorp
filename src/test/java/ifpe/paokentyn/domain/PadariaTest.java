@@ -63,6 +63,29 @@ public class PadariaTest extends GenericTest {
 
         logger.info("Padaria encontrada: ID={}, nome={}", padaria.getId(), padaria.getNome());
     }
+    
+    @Test
+    public void testAtualizarPadariaGerenciada() {
+        logger.info("--- Executando testAtualizarPadariaGerenciada (Sem Merge) ---");
+
+        Padaria padaria = buscarPadariaPorNome("Padaria do Melhor Teste");
+        assertNotNull(padaria);
+        Long idOriginal = padaria.getId();
+        
+        String cepAntigo = padaria.getCep();
+        String novoCep = "50000-999";
+
+        padaria.setCep(novoCep);
+
+        em.flush(); 
+        em.clear();
+
+        Padaria padariaAtualizada = em.find(Padaria.class, idOriginal);
+        assertEquals(novoCep, padariaAtualizada.getCep());
+        assertNotEquals(cepAntigo, padariaAtualizada.getCep());
+        
+        logger.info("CEP atualizado automaticamente via Dirty Checking.");
+    }
 
     @Test
     public void testAtualizarPadariaComMerge() {

@@ -60,6 +60,28 @@ public class PedidoTest extends GenericTest {
 
         logger.info("Novo pedido persistido com sucesso: id={}", novoPedido.getId());
     }
+    
+    @Test
+    public void testAtualizarPedidoGerenciado() {
+        logger.info("--- Executando testAtualizarPedidoGerenciado (Sem Merge) ---");
+
+        Pedido pedido = buscarPedidoPorValor(70.00);
+        assertNotNull(pedido);
+        Long idOriginal = pedido.getId();
+
+        Double valorAntigo = pedido.getValorTotal();
+        Double novoValor = valorAntigo + 10.0;
+
+        pedido.setValorTotal(novoValor);
+
+        em.flush();
+        em.clear();
+
+        Pedido pedidoAtualizado = em.find(Pedido.class, idOriginal);
+        assertEquals(novoValor, pedidoAtualizado.getValorTotal());
+
+        logger.info("Valor atualizado via Dirty Checking: {} -> {}", valorAntigo, novoValor);
+    }
 
     @Test
     public void testAtualizarPedidoComMerge() {

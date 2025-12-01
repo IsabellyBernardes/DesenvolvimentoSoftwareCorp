@@ -54,11 +54,9 @@ public class FuncionarioTest extends GenericTest {
     public void testPersistirFuncionarioComDadosBancarios() {
         logger.info("--- Executando testPersistirFuncionarioComDadosBancarios ---");
 
-        // 1. Busca dependência (Padaria) dinamicamente
         Padaria padariaExistente = buscarPadariaPorNome("Padaria do Melhor Teste");
         assertNotNull(padariaExistente);
 
-        // 2. Cria novos objetos
         DadosBancarios novosDados = new DadosBancarios();
         novosDados.setBanco("Banco Novo S.A.");
         novosDados.setAgencia("0002");
@@ -72,15 +70,12 @@ public class FuncionarioTest extends GenericTest {
         
         novoFunc.setDadosBancarios(novosDados);
 
-        // 3. Persiste
         em.persist(novoFunc);
         em.flush();
 
-        // 4. Valida
         assertNotNull(novoFunc.getId());
         assertTrue(novoFunc.getId() > 0);
         
-        // Garante que não é o mesmo ID do João Silva
         Funcionario joao = buscarFuncionarioPorNome("João Silva");
         assertNotEquals(joao.getId(), novoFunc.getId());
 
@@ -88,29 +83,42 @@ public class FuncionarioTest extends GenericTest {
     }
     
     @Test
-    public void testAtualizarFuncionarioComMerge() {
-        logger.info("--- Executando testAtualizarFuncionarioComMerge ---");
-        
-        // 1. Busca dinâmica
+    public void testAtualizarFuncionarioGerenciado() {
+        logger.info("--- Executando testAtualizarFuncionarioGerenciado (Sem Merge) ---");
+
         Funcionario func = buscarFuncionarioPorNome("João Silva");
         assertNotNull(func);
         Long idOriginal = func.getId();
         
-        // 2. Desanexa
+        func.setCargo("Mestre Padeiro"); 
+        
+        em.flush(); 
+        em.clear();
+       
+        Funcionario funcAtualizado = em.find(Funcionario.class, idOriginal);
+        assertEquals("Mestre Padeiro", funcAtualizado.getCargo());
+        
+        logger.info("Cargo atualizado automaticamente via Dirty Checking.");
+    }
+    
+    @Test
+    public void testAtualizarFuncionarioComMerge() {
+        logger.info("--- Executando testAtualizarFuncionarioComMerge ---");
+        
+        Funcionario func = buscarFuncionarioPorNome("João Silva");
+        assertNotNull(func);
+        Long idOriginal = func.getId();
+        
         em.clear(); 
         
-        // 3. Modifica (Detached)
         func.setCargo("Gerente de Produção");
         func.setSalario(4500.00);
         
-        // 4. Merge
         em.merge(func); 
         
-        // 5. Sincroniza
         em.flush();
         em.clear();
         
-        // 6. Verifica (Buscando pelo ID que descobrimos antes)
         Funcionario funcAtualizado = em.find(Funcionario.class, idOriginal);
         assertEquals("Gerente de Produção", funcAtualizado.getCargo());
         assertEquals(4500.00, funcAtualizado.getSalario());
@@ -122,11 +130,9 @@ public class FuncionarioTest extends GenericTest {
     public void testRemoverFuncionarioECascade() {
         logger.info("--- Executando testRemoverFuncionarioECascade ---");
         
-        // 1. Busca dinâmica
         Funcionario func = buscarFuncionarioPorNome("João Silva");
         assertNotNull(func);
         
-        // Captura IDs dos filhos para verificar cascade depois
         assertNotNull(func.getDadosBancarios());
         Long idDadosBancarios = func.getDadosBancarios().getId();
         
