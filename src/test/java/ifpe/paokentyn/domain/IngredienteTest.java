@@ -6,6 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 
 
 public class IngredienteTest extends GenericTest {
@@ -22,6 +27,19 @@ public class IngredienteTest extends GenericTest {
         TypedQuery<Ingrediente> query = em.createQuery(jpql, Ingrediente.class);
         query.setParameter("id", id);
         return query.getSingleResult();
+    }
+    
+    private List<Ingrediente> buscarIngredientesDinamico(String termoBusca) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Ingrediente> query = cb.createQuery(Ingrediente.class);
+        Root<Ingrediente> root = query.from(Ingrediente.class);
+
+        if (termoBusca != null) {
+            // WHERE nome LIKE %termo%
+            query.where(cb.like(cb.lower(root.get("nome")), "%" + termoBusca.toLowerCase() + "%"));
+        }
+        
+        return em.createQuery(query).getResultList();
     }
 
     @Test
@@ -44,6 +62,27 @@ public class IngredienteTest extends GenericTest {
             ingrediente.getId(), 
             paoRelacionado.getNomePao()
         );
+    }
+    
+    @Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria (Ingrediente) ---");
+
+        // Cenário A: Busca específica ("Trigo")
+        List<Ingrediente> trigo = buscarIngredientesDinamico("Trigo");
+        assertEquals(1, trigo.size());
+        assertEquals("Farinha de Trigo", trigo.get(0).getNome());
+
+        // Cenário B: Busca genérica (letra "o")
+        // "Farinha de Trig(o)", "(O)v(o)s", "P(o)lvilh(o)" -> Todos têm 'o'
+        List<Ingrediente> comLetraO = buscarIngredientesDinamico("o");
+        assertEquals(3, comLetraO.size());
+
+        // Cenário C: Busca inexistente ("Chocolate")
+        List<Ingrediente> nada = buscarIngredientesDinamico("Chocolate");
+        assertTrue(nada.isEmpty());
+
+        logger.info("Teste Criteria Ingrediente OK.");
     }
     
     @Test

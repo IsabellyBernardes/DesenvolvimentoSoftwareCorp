@@ -7,6 +7,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DadosBancariosTest extends GenericTest {
 
@@ -25,6 +31,23 @@ public class DadosBancariosTest extends GenericTest {
         query.setParameter("id", id);
         return query.getSingleResult();
     }
+    
+    private List<DadosBancarios> buscarDadosDinamico(String banco, String agencia) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<DadosBancarios> query = cb.createQuery(DadosBancarios.class);
+        Root<DadosBancarios> root = query.from(DadosBancarios.class);
+        List<Predicate> condicoes = new ArrayList<>();
+
+        if (banco != null) {
+            condicoes.add(cb.like(root.get("banco"), "%" + banco + "%"));
+        }
+        if (agencia != null) {
+            condicoes.add(cb.equal(root.get("agencia"), agencia));
+        }
+
+        query.where(cb.and(condicoes.toArray(new Predicate[0])));
+        return em.createQuery(query).getResultList();
+    }
 
     @Test
     public void testEncontrarDadosBancariosDoDataSet() {
@@ -40,6 +63,27 @@ public class DadosBancariosTest extends GenericTest {
 
         logger.info("Encontrada conta: {} do func. {}",
                 dados.getConta(), dados.getFuncionario().getNome());
+    }
+    
+    @Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria (DadosBancarios) ---");
+
+        // Cenário A: Busca por Banco ("Teste") -> Todos os 3
+        List<DadosBancarios> todos = buscarDadosDinamico("Teste", null);
+        assertEquals(3, todos.size());
+
+        // Cenário B: Busca por Agência Específica ("0002")
+        List<DadosBancarios> agencia2 = buscarDadosDinamico(null, "0002");
+        assertEquals(1, agencia2.size());
+        assertEquals("12345-2", agencia2.get(0).getConta());
+
+        // Cenário C: Combinação Banco + Agência
+        List<DadosBancarios> combo = buscarDadosDinamico("Teste", "0003");
+        assertEquals(1, combo.size());
+        assertEquals("12345-3", combo.get(0).getConta());
+
+        logger.info("Teste Criteria DadosBancarios OK.");
     }
 
     @Test

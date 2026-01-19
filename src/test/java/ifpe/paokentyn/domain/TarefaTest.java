@@ -6,6 +6,12 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TarefaTest extends GenericTest {
 
@@ -79,6 +85,61 @@ public class TarefaTest extends GenericTest {
 
         logger.info("Tarefa persistida: '{}' com ID: {}", 
                     novaTarefa.getDescricao(), novaTarefa.getId());
+    }
+    
+    // --- MÉTODO AUXILIAR (Criteria API) ---
+    private List<Tarefa> buscarTarefasDinamico(String parteDescricao, Boolean concluida) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tarefa> query = cb.createQuery(Tarefa.class);
+        Root<Tarefa> root = query.from(Tarefa.class);
+        List<Predicate> condicoes = new ArrayList<>();
+
+        if (parteDescricao != null && !parteDescricao.isEmpty()) {
+            condicoes.add(cb.like(cb.lower(root.get("descricao")), "%" + parteDescricao.toLowerCase() + "%"));
+        }
+
+        if (concluida != null) {
+            // isTrue ou isFalse dependendo do parametro
+            if (concluida) {
+                condicoes.add(cb.isTrue(root.get("concluida")));
+            } else {
+                condicoes.add(cb.isFalse(root.get("concluida")));
+            }
+        }
+
+        query.where(cb.and(condicoes.toArray(new Predicate[0])));
+        return em.createQuery(query).getResultList();
+    }
+
+    // --- TESTE ---
+    @Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria (Tarefa) ---");
+
+        // Cenário A: Filtrar por parte da descrição ("estoque")
+        // Deve achar "Checar estoque de farinha"
+        List<Tarefa> tarefasEstoque = buscarTarefasDinamico("estoque", null);
+        assertEquals(1, tarefasEstoque.size());
+        assertTrue(tarefasEstoque.get(0).getDescricao().contains("estoque"));
+        logger.info("Filtro Texto OK: {}", tarefasEstoque.get(0).getDescricao());
+
+        // Cenário B: Filtrar por Status (Apenas Pendentes/False)
+        // Todas as 3 do dataset são false
+        List<Tarefa> pendentes = buscarTarefasDinamico(null, false);
+        assertEquals(3, pendentes.size(), "Deveria trazer as 3 tarefas pendentes");
+
+        // Cenário C: Filtrar por Status (Apenas Concluídas/True)
+        // Nenhuma está concluída no dataset
+        List<Tarefa> concluidas = buscarTarefasDinamico(null, true);
+        assertTrue(concluidas.isEmpty(), "Não deveria haver tarefas concluídas no dataset");
+
+        // Cenário D: Combinação Específica (Descrição "pães" E Pendente)
+        // Deve achar "Assar pães"
+        List<Tarefa> assar = buscarTarefasDinamico("pães", false);
+        assertEquals(1, assar.size());
+        assertEquals("Assar pães", assar.get(0).getDescricao());
+
+        logger.info("Teste de Criteria API finalizado com sucesso.");
     }
     
     @Test

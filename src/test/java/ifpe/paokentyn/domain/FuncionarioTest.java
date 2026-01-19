@@ -6,6 +6,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FuncionarioTest extends GenericTest {
 
@@ -30,6 +36,24 @@ public class FuncionarioTest extends GenericTest {
         TypedQuery<Padaria> query = em.createQuery(jpql, Padaria.class);
         query.setParameter("nome", nome);
         return query.getSingleResult();
+    }
+    
+    private List<Funcionario> buscarFuncionariosDinamico(String parteNome, Double salarioMinimo) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Funcionario> query = cb.createQuery(Funcionario.class);
+        Root<Funcionario> root = query.from(Funcionario.class);
+        List<Predicate> condicoes = new ArrayList<>();
+
+        if (parteNome != null && !parteNome.isEmpty()) {
+            condicoes.add(cb.like(cb.lower(root.get("nome")), "%" + parteNome.toLowerCase() + "%"));
+        }
+
+        if (salarioMinimo != null) {
+            condicoes.add(cb.ge(root.get("salario"), salarioMinimo));
+        }
+
+        query.where(cb.and(condicoes.toArray(new Predicate[0])));
+        return em.createQuery(query).getResultList();
     }
 
     @Test
@@ -80,6 +104,33 @@ public class FuncionarioTest extends GenericTest {
         assertNotEquals(joao.getId(), novoFunc.getId());
 
         logger.info("Persistido funcionário {} com ID {}", novoFunc.getNome(), novoFunc.getId());
+    }
+    
+    @Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria (Funcionario) ---");
+
+        // Cenário A: Filtrar por Salário Mínimo (Quem ganha >= 3000.00?)
+        // No dataset, todos os 3 ganham 3200.00
+        List<Funcionario> ricos = buscarFuncionariosDinamico(null, 3000.00);
+        assertEquals(3, ricos.size(), "Deveria trazer João, Maria e Pedro");
+
+        // Cenário B: Filtrar por Nome Específico ("Maria")
+        List<Funcionario> marias = buscarFuncionariosDinamico("Maria", null);
+        assertEquals(1, marias.size());
+        assertEquals("Maria Silva", marias.get(0).getNome());
+        logger.info("Filtro Nome OK: Encontrou {}", marias.get(0).getNome());
+
+        // Cenário C: Filtrar por Nome E Salário Alto (Inexistente)
+        // Maria ganha 3200. Se pedirmos Maria ganhando >= 5000, deve vir vazio.
+        List<Funcionario> impossivel = buscarFuncionariosDinamico("Maria", 5000.00);
+        assertTrue(impossivel.isEmpty(), "Não existe Maria ganhando 5k");
+
+        // Cenário D: Sem filtros (Todos)
+        List<Funcionario> todos = buscarFuncionariosDinamico(null, null);
+        assertEquals(3, todos.size());
+
+        logger.info("Teste de Criteria API finalizado com sucesso.");
     }
     
     @Test

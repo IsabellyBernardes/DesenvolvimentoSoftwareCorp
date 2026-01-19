@@ -4,6 +4,11 @@ import jakarta.persistence.TypedQuery;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 
 public class PadariaTest extends GenericTest {
 
@@ -23,6 +28,23 @@ public class PadariaTest extends GenericTest {
         TypedQuery<Padaria> query = em.createQuery(jpql, Padaria.class);
         query.setParameter("id", id);
         return query.getSingleResult();
+    }
+    
+    private List<Padaria> buscarPadariasDinamico(String parteNome, String cep) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Padaria> query = cb.createQuery(Padaria.class);
+        Root<Padaria> root = query.from(Padaria.class);
+        List<Predicate> condicoes = new ArrayList<>();
+
+        if (parteNome != null) {
+            condicoes.add(cb.like(cb.lower(root.get("nome")), "%" + parteNome.toLowerCase() + "%"));
+        }
+        if (cep != null) {
+            condicoes.add(cb.equal(root.get("cep"), cep));
+        }
+
+        query.where(cb.and(condicoes.toArray(new Predicate[0])));
+        return em.createQuery(query).getResultList();
     }
 
     @Test
@@ -62,6 +84,32 @@ public class PadariaTest extends GenericTest {
         assertEquals(1L, padaria.getId(), "O banco deveria ter gerado ID 1 para a primeira padaria");
 
         logger.info("Padaria encontrada: ID={}, nome={}", padaria.getId(), padaria.getNome());
+    }
+    
+    @Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria (Padaria) ---");
+
+        // Cenário A: Filtrar por CEP comum (55555555)
+        // Deve trazer Padaria 2 e Padaria 3
+        List<Padaria> filiais = buscarPadariasDinamico(null, "55555555");
+        assertEquals(2, filiais.size());
+        
+        // Cenário B: Filtrar por Nome Único ("Teste 3")
+        List<Padaria> padaria3 = buscarPadariasDinamico("Teste 3", null);
+        assertEquals(1, padaria3.size());
+        assertEquals("Padaria do Melhor Teste 3", padaria3.get(0).getNome());
+
+        // Cenário C: Filtrar por Nome Comum ("Melhor Teste")
+        // Todas as 3 padarias têm esse texto no nome
+        List<Padaria> todas = buscarPadariasDinamico("Melhor Teste", null);
+        assertEquals(3, todas.size());
+
+        // Cenário D: Combinação Nome + CEP (Padaria 2)
+        List<Padaria> padaria2 = buscarPadariasDinamico("Teste 2", "55555555");
+        assertEquals(1, padaria2.size());
+
+        logger.info("Teste Criteria Padaria OK.");
     }
     
     @Test

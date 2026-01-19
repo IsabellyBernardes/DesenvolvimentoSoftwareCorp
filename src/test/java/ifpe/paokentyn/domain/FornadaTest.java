@@ -4,6 +4,11 @@ import jakarta.persistence.TypedQuery;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import java.util.Date;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import java.util.List;
 
 public class FornadaTest extends GenericTest {
 
@@ -28,6 +33,22 @@ public class FornadaTest extends GenericTest {
         TypedQuery<Fornada> query = em.createQuery(jpql, Fornada.class);
         query.setParameter("id", id);
         return query.getResultList().stream().findFirst().orElse(null);
+    }
+    
+    private List<Fornada> buscarFornadasPorPadariaDinamico(String nomePadaria) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Fornada> query = cb.createQuery(Fornada.class);
+        Root<Fornada> root = query.from(Fornada.class);
+
+        if (nomePadaria != null) {
+            // JOIN: root.join("padaria") navega para a tabela Padaria
+            Join<Fornada, Padaria> joinPadaria = root.join("padaria");
+            
+            // Compara o nome na tabela unida
+            query.where(cb.like(joinPadaria.get("nome"), "%" + nomePadaria + "%"));
+        }
+
+        return em.createQuery(query).getResultList();
     }
 
 
@@ -70,6 +91,30 @@ public class FornadaTest extends GenericTest {
         assertEquals(padariaExistente.getId(), fornadaDoBanco.getPadaria().getId());
 
         logger.info("Nova fornada persistida com sucesso. ID Gerado: {}", novaFornada.getId());
+    }
+    
+    @Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria (Fornada) ---");
+
+        // Cenário A: Fornadas da "Padaria do Melhor Teste" (Exato) -> ID 1 (tem 1 fornada)
+        // Nota: O LIKE pega também a "Teste 2" e "Teste 3", então precisamos ser específicos
+        // Vamos filtrar pela String única da padaria 1 que não tem nas outras.
+        // Mas como os nomes são muito parecidos, o ideal é filtrar pelo final.
+        
+        // Vamos buscar fornadas da "Padaria do Melhor Teste 2" (tem 2 fornadas no dataset)
+        List<Fornada> fornadasPadaria2 = buscarFornadasPorPadariaDinamico("Teste 2");
+        assertEquals(2, fornadasPadaria2.size(), "Padaria 2 deveria ter 2 fornadas");
+
+        // Cenário B: Busca geral "Padaria" (Todas as 3 fornadas de todas as padarias)
+        List<Fornada> todas = buscarFornadasPorPadariaDinamico("Padaria");
+        assertEquals(3, todas.size());
+
+        // Cenário C: Padaria inexistente
+        List<Fornada> nenhuma = buscarFornadasPorPadariaDinamico("Padaria Fantasma");
+        assertTrue(nenhuma.isEmpty());
+
+        logger.info("Teste Criteria Fornada (com JOIN) OK.");
     }
 
     @Test

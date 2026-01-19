@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import java.util.List;
 
 
 public class ItemPedidoTest extends GenericTest {
@@ -43,6 +47,19 @@ public class ItemPedidoTest extends GenericTest {
     private Fornada buscarFornadaQualquer() {
         return em.createQuery("SELECT f FROM Fornada f", Fornada.class)
                  .getResultList().get(0);
+    }
+    
+    private List<ItemPedido> buscarItensPorQuantidadeMinima(Integer qtdMinima) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ItemPedido> query = cb.createQuery(ItemPedido.class);
+        Root<ItemPedido> root = query.from(ItemPedido.class);
+
+        if (qtdMinima != null) {
+            // WHERE quantidade >= qtdMinima
+            query.where(cb.ge(root.get("quantidade"), qtdMinima));
+        }
+        
+        return em.createQuery(query).getResultList();
     }
 
 
@@ -98,6 +115,29 @@ public class ItemPedidoTest extends GenericTest {
         assertNotEquals(itemDoDataset.getId(), novoItem.getId());
 
         logger.info("Novo ItemPedido persistido com ID={}", novoItem.getId());
+    }
+    
+    @Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria (ItemPedido) ---");
+
+        // Cenário A: Itens com grande quantidade (>= 10)
+        // Apenas o primeiro item tem 10
+        List<ItemPedido> itensGrandes = buscarItensPorQuantidadeMinima(10);
+        assertEquals(1, itensGrandes.size());
+        assertEquals(10, itensGrandes.get(0).getQuantidade());
+
+        // Cenário B: Itens com quantidade média (>= 5)
+        // Todos os 4 itens têm 5 ou 10.
+        List<ItemPedido> itensMedios = buscarItensPorQuantidadeMinima(5);
+        assertEquals(4, itensMedios.size());
+
+        // Cenário C: Itens gigantes (>= 50)
+        // Nenhum
+        List<ItemPedido> itensGigantes = buscarItensPorQuantidadeMinima(50);
+        assertTrue(itensGigantes.isEmpty());
+
+        logger.info("Teste Criteria ItemPedido OK.");
     }
     
     @Test

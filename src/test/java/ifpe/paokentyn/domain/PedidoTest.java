@@ -6,6 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Date;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoTest extends GenericTest {
 
@@ -23,6 +29,26 @@ public class PedidoTest extends GenericTest {
         TypedQuery<Pedido> query = em.createQuery(jpql, Pedido.class);
         query.setParameter("id", id);
         return query.getResultList().stream().findFirst().orElse(null);
+    }
+    
+    private List<Pedido> buscarPedidosDinamico(Double valorMinimo, Double valorMaximo) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Pedido> query = cb.createQuery(Pedido.class);
+        Root<Pedido> root = query.from(Pedido.class);
+        List<Predicate> condicoes = new ArrayList<>();
+
+        if (valorMinimo != null) {
+            condicoes.add(cb.ge(root.get("valorTotal"), valorMinimo));
+        }
+        
+        if (valorMaximo != null) {
+            condicoes.add(cb.le(root.get("valorTotal"), valorMaximo));
+        }
+
+        query.where(cb.and(condicoes.toArray(new Predicate[0])));
+        // Ordena pelo maior valor para facilitar o teste
+        query.orderBy(cb.desc(root.get("valorTotal"))); 
+        return em.createQuery(query).getResultList();
     }
 
 
@@ -59,6 +85,33 @@ public class PedidoTest extends GenericTest {
         assertNotEquals(pedidoDataset.getId(), novoPedido.getId(), "ID não deve ser o mesmo do dataset");
 
         logger.info("Novo pedido persistido com sucesso: id={}", novoPedido.getId());
+    }
+    
+       @Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria (Pedido) ---");
+
+        // Cenário A: Filtrar pedidos caros (>= 60.00)
+        // Deve vir apenas o pedido de 70.00
+        List<Pedido> caros = buscarPedidosDinamico(60.00, null);
+        assertEquals(1, caros.size());
+        assertEquals(70.00, caros.get(0).getValorTotal());
+        logger.info("Filtro Mínimo OK: Achou pedido de {}", caros.get(0).getValorTotal());
+
+        // Cenário B: Filtrar faixa de preço (entre 50.00 e 80.00)
+        // Deve vir os dois (55.00 e 70.00)
+        List<Pedido> faixa = buscarPedidosDinamico(50.00, 80.00);
+        assertEquals(2, faixa.size());
+
+        // Cenário C: Filtrar valor muito alto (>= 100.00)
+        List<Pedido> vips = buscarPedidosDinamico(100.00, null);
+        assertTrue(vips.isEmpty());
+
+        // Cenário D: Sem filtros
+        List<Pedido> todos = buscarPedidosDinamico(null, null);
+        assertEquals(2, todos.size());
+
+        logger.info("Teste de Criteria API finalizado com sucesso.");
     }
     
     @Test

@@ -10,12 +10,12 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:3.1.0:exec</goal>
             </goals>
             <properties>
-                <exec.vmArgs>-javaagent:eclipselink-4.0.4.jar</exec.vmArgs>
+                <exec.vmArgs></exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.appArgs></exec.appArgs>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
-                <exec.workingdir>C:\Users\isabe\.m2\repository\org\eclipse\persistence\eclipselink\4.0.4</exec.workingdir>
+                <exec.workingdir>C:\Faculdade\DesenvolvimentoSoftwareCorp-master (3)\DesenvolvimentoSoftwareCorp-master</exec.workingdir>
             </properties>
         </action>
         <action>
@@ -28,7 +28,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:3.1.0:exec</goal>
             </goals>
             <properties>
-                <exec.vmArgs>-javaagent:eclipselink-4.0.4.jar -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
+                <exec.vmArgs>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.appArgs></exec.appArgs>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
@@ -47,7 +47,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:3.1.0:exec</goal>
             </goals>
             <properties>
-                <exec.vmArgs>-javaagent:eclipselink-4.0.4.jar</exec.vmArgs>
+                <exec.vmArgs></exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>

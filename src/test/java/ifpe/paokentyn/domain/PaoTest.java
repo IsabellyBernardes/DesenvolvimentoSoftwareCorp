@@ -1,6 +1,11 @@
 package ifpe.paokentyn.domain;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -10,6 +15,36 @@ import org.slf4j.LoggerFactory;
 public class PaoTest extends GenericTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PaoTest.class);
+    
+    private List<Pao> buscarPaesComFiltroDinamico(String parteNome, Double precoMaximo) {
+    
+    // 1. Fábrica
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    
+    // 2. Desenho da Query
+    CriteriaQuery<Pao> query = cb.createQuery(Pao.class);
+    Root<Pao> root = query.from(Pao.class);
+    
+    // 3. Lista de Predicados (Condições)
+    List<Predicate> condicoes = new ArrayList<>();
+
+    // CONDICIONAL 1: Se tem nome, adiciona LIKE
+    if (parteNome != null && !parteNome.isEmpty()) {
+        // lower() para ignorar maiúsculas/minúsculas
+        condicoes.add(cb.like(cb.lower(root.get("nomePao")), "%" + parteNome.toLowerCase() + "%"));
+    }
+
+    // CONDICIONAL 2: Se tem preço máximo, adiciona LE (Less or Equal)
+    if (precoMaximo != null) {
+        condicoes.add(cb.le(root.get("preco"), precoMaximo));
+    }
+
+    // 4. Monta o WHERE (transforma a lista em array e une com AND)
+    query.where(cb.and(condicoes.toArray(new Predicate[0])));
+    
+    // 5. Executa
+    return em.createQuery(query).getResultList();
+}
 
     private Pao buscarPaoPorNome(String nome) {
         String jpql = "SELECT p FROM Pao p WHERE p.nomePao = :nome";
@@ -56,6 +91,38 @@ public class PaoTest extends GenericTest {
         logger.info("Encontrado: {} (com {} ingredientes)", pao.getNomePao(), pao.getIngredientes().size());
     }
 
+@Test
+    public void testBuscaDinamicaComCriteria() {
+        logger.info("--- Executando testBuscaDinamicaComCriteria ---");
+
+        // Cenário A: Filtrar APENAS por preço (Paes baratos <= 4.00)
+        List<Pao> paesBaratos = buscarPaesComFiltroDinamico(null, 4.00);
+        
+        assertEquals(2, paesBaratos.size(), "Deveria vir 2 pães baratos (Queijo e Sal)");
+        
+        assertTrue(paesBaratos.stream().allMatch(p -> p.getPreco() <= 4.00));
+        
+        logger.info("Filtro Preço OK: Encontrou {} e {}", 
+                paesBaratos.get(0).getNomePao(), 
+                paesBaratos.get(1).getNomePao());
+
+        List<Pao> paesIntegrais = buscarPaesComFiltroDinamico("Integral", null);
+        
+        assertEquals(1, paesIntegrais.size());
+        assertEquals("Pão Integral", paesIntegrais.get(0).getNomePao());
+        logger.info("Filtro Nome OK: Achou {}", paesIntegrais.get(0).getNomePao());
+
+        // Cenário C: Filtrar por Nome E Preço (Inexistente)
+        List<Pao> paesImpossiveis = buscarPaesComFiltroDinamico("Queijo", 1.00);
+        assertTrue(paesImpossiveis.isEmpty(), "Não deveria achar nada com esses filtros restritos");
+
+        // Cenário D: Sem filtros (Deve trazer TODOS: Integral, Queijo e Sal)
+        List<Pao> todos = buscarPaesComFiltroDinamico(null, null);
+        assertEquals(3, todos.size(), "Deveria trazer todos os 3 pães do dataset");
+        
+        logger.info("Teste de Criteria API (Filtros Dinâmicos) finalizado com sucesso.");
+    }
+    
     @Test
     public void testPersistirPaoComNovoIngrediente() {
         logger.info("--- Executando testPersistirPaoComNovoIngrediente ---");
