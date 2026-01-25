@@ -10,8 +10,11 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({
     DadosBancariosTest.class,
+    DadosBancariosCriteriaTest.class,
     FornadaTest.class,
+    FornadaCriteriaTest.class,
     FuncionarioTest.class,
+    FuncionarioCriteriaTest.class,
     IngredienteTest.class,
     ItemPedidoTest.class,
     PadariaTest.class,

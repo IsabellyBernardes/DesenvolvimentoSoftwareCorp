@@ -18,42 +18,53 @@ public class DadosBancariosTest extends GenericTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DadosBancariosTest.class);
 
-    private DadosBancarios buscarPorConta(String conta) {
+    private DadosBancarios buscarPorContaJPQL(String conta) {
         String jpql = "SELECT d FROM DadosBancarios d WHERE d.conta = :conta";
         TypedQuery<DadosBancarios> query = em.createQuery(jpql, DadosBancarios.class);
         query.setParameter("conta", conta);
         return query.getSingleResult();
     }
 
-    private DadosBancarios buscarPorId(int id) {
+    private List<DadosBancarios> buscarPorNomeBancoJPQL(String parteNomeBanco) {
+        String jpql = "SELECT d FROM DadosBancarios d WHERE LOWER(d.banco) LIKE LOWER(:nome)";
+        TypedQuery<DadosBancarios> query = em.createQuery(jpql, DadosBancarios.class);
+        query.setParameter("nome", "%" + parteNomeBanco + "%");
+        return query.getResultList();
+    }
+
+    private List<DadosBancarios> buscarPorAgenciaJPQL(String agencia) {
+        String jpql = "SELECT d FROM DadosBancarios d WHERE d.agencia = :agencia";
+        TypedQuery<DadosBancarios> query = em.createQuery(jpql, DadosBancarios.class);
+        query.setParameter("agencia", agencia);
+        return query.getResultList();
+    }
+
+    private DadosBancarios buscarPeloNomeFuncionarioJPQL(String nomeFuncionario) {
+        String jpql = "SELECT d FROM DadosBancarios d JOIN d.funcionario f WHERE f.nome = :nome";
+        TypedQuery<DadosBancarios> query = em.createQuery(jpql, DadosBancarios.class);
+        query.setParameter("nome", nomeFuncionario);
+        return query.getSingleResult();
+    }
+
+    private Long contarContasPorBancoJPQL(String nomeBancoExact) {
+        String jpql = "SELECT COUNT(d) FROM DadosBancarios d WHERE d.banco = :banco";
+        TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+        query.setParameter("banco", nomeBancoExact);
+        return query.getSingleResult();
+    }
+    
+    private DadosBancarios buscarPorId(long id) {
         String jpql = "SELECT d FROM DadosBancarios d WHERE d.id = :id";
         TypedQuery<DadosBancarios> query = em.createQuery(jpql, DadosBancarios.class);
         query.setParameter("id", id);
         return query.getSingleResult();
-    }
-    
-    private List<DadosBancarios> buscarDadosDinamico(String banco, String agencia) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<DadosBancarios> query = cb.createQuery(DadosBancarios.class);
-        Root<DadosBancarios> root = query.from(DadosBancarios.class);
-        List<Predicate> condicoes = new ArrayList<>();
-
-        if (banco != null) {
-            condicoes.add(cb.like(root.get("banco"), "%" + banco + "%"));
-        }
-        if (agencia != null) {
-            condicoes.add(cb.equal(root.get("agencia"), agencia));
-        }
-
-        query.where(cb.and(condicoes.toArray(new Predicate[0])));
-        return em.createQuery(query).getResultList();
     }
 
     @Test
     public void testEncontrarDadosBancariosDoDataSet() {
         logger.info("--- Executando testEncontrarDadosBancariosDoDataSet ---");
 
-        DadosBancarios dados = buscarPorConta("12345-6");
+        DadosBancarios dados = buscarPorContaJPQL("12345-6");
 
         assertNotNull(dados, "Deveria ter encontrado a conta 12345-6 do dataset");
         assertEquals("Banco Teste S.A.", dados.getBanco());
@@ -66,31 +77,10 @@ public class DadosBancariosTest extends GenericTest {
     }
     
     @Test
-    public void testBuscaDinamicaComCriteria() {
-        logger.info("--- Executando testBuscaDinamicaComCriteria (DadosBancarios) ---");
-
-        // Cenário A: Busca por Banco ("Teste") -> Todos os 3
-        List<DadosBancarios> todos = buscarDadosDinamico("Teste", null);
-        assertEquals(3, todos.size());
-
-        // Cenário B: Busca por Agência Específica ("0002")
-        List<DadosBancarios> agencia2 = buscarDadosDinamico(null, "0002");
-        assertEquals(1, agencia2.size());
-        assertEquals("12345-2", agencia2.get(0).getConta());
-
-        // Cenário C: Combinação Banco + Agência
-        List<DadosBancarios> combo = buscarDadosDinamico("Teste", "0003");
-        assertEquals(1, combo.size());
-        assertEquals("12345-3", combo.get(0).getConta());
-
-        logger.info("Teste Criteria DadosBancarios OK.");
-    }
-
-    @Test
     public void testAtualizarDadosGerenciados() {
         logger.info("--- Executando testAtualizarDadosGerenciados ---");
 
-        DadosBancarios dados = buscarPorConta("12345-6");
+        DadosBancarios dados = buscarPorContaJPQL("12345-6");
         assertNotNull(dados);
 
         dados.setBanco("Banco Digital Nubank");
@@ -98,7 +88,7 @@ public class DadosBancariosTest extends GenericTest {
         em.flush();
         em.clear();
 
-        DadosBancarios dadosAtualizados = buscarPorConta("12345-6");
+        DadosBancarios dadosAtualizados = buscarPorContaJPQL("12345-6");
         assertEquals("Banco Digital Nubank", dadosAtualizados.getBanco());
 
         logger.info("Banco atualizado para: {}", dadosAtualizados.getBanco());
@@ -108,7 +98,7 @@ public class DadosBancariosTest extends GenericTest {
     public void testAtualizarDadosComMerge() {
         logger.info("--- Executando testAtualizarDadosComMerge ---");
 
-        DadosBancarios dados = buscarPorConta("12345-6");
+        DadosBancarios dados = buscarPorContaJPQL("12345-6");
         assertNotNull(dados);
         Long idOriginal = dados.getId(); 
 
@@ -121,7 +111,7 @@ public class DadosBancariosTest extends GenericTest {
         em.flush();
         em.clear();
 
-        DadosBancarios dadosAtualizados = buscarPorConta("99999-X");
+        DadosBancarios dadosAtualizados = buscarPorContaJPQL("99999-X");
         assertEquals(idOriginal, dadosAtualizados.getId(), "O ID deve ser o mesmo");
         assertEquals("99999-X", dadosAtualizados.getConta());
 
@@ -132,7 +122,7 @@ public class DadosBancariosTest extends GenericTest {
     public void testRemoverDadosBancarios() {
         logger.info("--- Executando testRemoverDadosBancarios ---");
 
-        DadosBancarios dados = buscarPorConta("12345-6");
+        DadosBancarios dados = buscarPorContaJPQL("12345-6");
         assertNotNull(dados);
 
         Funcionario dono = dados.getFuncionario();
@@ -153,6 +143,52 @@ public class DadosBancariosTest extends GenericTest {
         assertTrue(lista.isEmpty(), "A conta 12345-6 deveria ter sido removida");
 
         logger.info("Dados Bancários removidos com sucesso.");
+    }
+    
+    @Test
+    public void testBuscarPorNomeBanco() {
+        logger.info("--- Executando testBuscarPorNomeBanco ---");
+
+        List<DadosBancarios> lista = buscarPorNomeBancoJPQL("Teste");
+
+        assertEquals(3, lista.size(), "Deveria encontrar 3 bancos com o termo 'Teste'");
+        
+        logger.info("Sucesso. Encontrados: {} bancos.", lista.size());
+    }
+
+    @Test
+    public void testBuscarPorAgencia() {
+        logger.info("--- Executando testBuscarPorAgencia ---");
+
+        List<DadosBancarios> lista = buscarPorAgenciaJPQL("0002");
+
+        assertEquals(1, lista.size(), "Deveria ter apenas 1 conta nessa agência");
+        assertEquals("12345-2", lista.get(0).getConta(), "A conta deveria ser a 12345-2");
+
+        logger.info("Sucesso. Agência 0002 pertence à conta {}", lista.get(0).getConta());
+    }
+
+    @Test
+    public void testBuscarPeloNomeFuncionario() {
+        logger.info("--- Executando testBuscarPeloNomeFuncionario (JOIN) ---");
+
+        DadosBancarios resultado = buscarPeloNomeFuncionarioJPQL("João Silva");
+
+        assertNotNull(resultado, "Deveria achar dados bancários para João Silva");
+        assertEquals("12345-6", resultado.getConta());
+
+        logger.info("Sucesso. A conta de João Silva é {}", resultado.getConta());
+    }
+
+    @Test
+    public void testContarContasPorBanco() {
+        logger.info("--- Executando testContarContasPorBanco (COUNT) ---");
+
+        Long quantidade = contarContasPorBancoJPQL("Banco Teste S.A.");
+
+        assertEquals(1L, quantidade, "Deveria existir exatamente 1 conta neste banco");
+
+        logger.info("Sucesso. Contagem correta: {}", quantidade);
     }
 
     @Test

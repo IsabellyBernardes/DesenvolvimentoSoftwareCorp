@@ -6,10 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,50 +14,46 @@ public class FuncionarioTest extends GenericTest {
 
     private static final Logger logger = LoggerFactory.getLogger(FuncionarioTest.class);
 
-    private Funcionario buscarFuncionarioPorNome(String nome) {
+    private Funcionario buscarFuncionarioPorNomeJPQL(String nome) {
         String jpql = "SELECT f FROM Funcionario f WHERE f.nome = :nome";
         TypedQuery<Funcionario> query = em.createQuery(jpql, Funcionario.class);
         query.setParameter("nome", nome);
         return query.getSingleResult();
     }
-    
-    private Funcionario buscarFuncionarioPorId(int id) {
+
+    private Funcionario buscarFuncionarioPorIdJPQL(long id) {
         String jpql = "SELECT f FROM Funcionario f WHERE f.id = :id";
         TypedQuery<Funcionario> query = em.createQuery(jpql, Funcionario.class);
         query.setParameter("id", id);
         return query.getSingleResult();
     }
 
-    private Padaria buscarPadariaPorNome(String nome) {
+    private Padaria buscarPadariaPorNomeJPQL(String nome) {
         String jpql = "SELECT p FROM Padaria p WHERE p.nome = :nome";
         TypedQuery<Padaria> query = em.createQuery(jpql, Padaria.class);
         query.setParameter("nome", nome);
         return query.getSingleResult();
     }
     
-    private List<Funcionario> buscarFuncionariosDinamico(String parteNome, Double salarioMinimo) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Funcionario> query = cb.createQuery(Funcionario.class);
-        Root<Funcionario> root = query.from(Funcionario.class);
-        List<Predicate> condicoes = new ArrayList<>();
+    private List<Funcionario> buscarFuncionariosPorCargoJPQL(String cargo) {
+        String jpql = "SELECT f FROM Funcionario f WHERE f.cargo = :cargo";
+        TypedQuery<Funcionario> query = em.createQuery(jpql, Funcionario.class);
+        query.setParameter("cargo", cargo);
+        return query.getResultList();
+    }
 
-        if (parteNome != null && !parteNome.isEmpty()) {
-            condicoes.add(cb.like(cb.lower(root.get("nome")), "%" + parteNome.toLowerCase() + "%"));
-        }
-
-        if (salarioMinimo != null) {
-            condicoes.add(cb.ge(root.get("salario"), salarioMinimo));
-        }
-
-        query.where(cb.and(condicoes.toArray(new Predicate[0])));
-        return em.createQuery(query).getResultList();
+    private Long contarFuncionariosDaPadariaJPQL(String nomePadaria) {
+        String jpql = "SELECT COUNT(f) FROM Funcionario f WHERE f.padaria.nome = :nome";
+        TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+        query.setParameter("nome", nomePadaria);
+        return query.getSingleResult();
     }
 
     @Test
     public void testEncontrarFuncionarioDoDataSet() {
         logger.info("--- Executando testEncontrarFuncionarioDoDataSet ---");
 
-        Funcionario func = buscarFuncionarioPorNome("João Silva");
+        Funcionario func = buscarFuncionarioPorNomeJPQL("João Silva");
 
         assertNotNull(func, "Funcionário João Silva deveria existir no dataset");
         assertEquals("Padeiro Senior", func.getCargo());
@@ -78,7 +71,7 @@ public class FuncionarioTest extends GenericTest {
     public void testPersistirFuncionarioComDadosBancarios() {
         logger.info("--- Executando testPersistirFuncionarioComDadosBancarios ---");
 
-        Padaria padariaExistente = buscarPadariaPorNome("Padaria do Melhor Teste");
+        Padaria padariaExistente = buscarPadariaPorNomeJPQL("Padaria do Melhor Teste");
         assertNotNull(padariaExistente);
 
         DadosBancarios novosDados = new DadosBancarios();
@@ -100,44 +93,17 @@ public class FuncionarioTest extends GenericTest {
         assertNotNull(novoFunc.getId());
         assertTrue(novoFunc.getId() > 0);
         
-        Funcionario joao = buscarFuncionarioPorNome("João Silva");
+        Funcionario joao = buscarFuncionarioPorNomeJPQL("João Silva");
         assertNotEquals(joao.getId(), novoFunc.getId());
 
         logger.info("Persistido funcionário {} com ID {}", novoFunc.getNome(), novoFunc.getId());
     }
-    
-    @Test
-    public void testBuscaDinamicaComCriteria() {
-        logger.info("--- Executando testBuscaDinamicaComCriteria (Funcionario) ---");
 
-        // Cenário A: Filtrar por Salário Mínimo (Quem ganha >= 3000.00?)
-        // No dataset, todos os 3 ganham 3200.00
-        List<Funcionario> ricos = buscarFuncionariosDinamico(null, 3000.00);
-        assertEquals(3, ricos.size(), "Deveria trazer João, Maria e Pedro");
-
-        // Cenário B: Filtrar por Nome Específico ("Maria")
-        List<Funcionario> marias = buscarFuncionariosDinamico("Maria", null);
-        assertEquals(1, marias.size());
-        assertEquals("Maria Silva", marias.get(0).getNome());
-        logger.info("Filtro Nome OK: Encontrou {}", marias.get(0).getNome());
-
-        // Cenário C: Filtrar por Nome E Salário Alto (Inexistente)
-        // Maria ganha 3200. Se pedirmos Maria ganhando >= 5000, deve vir vazio.
-        List<Funcionario> impossivel = buscarFuncionariosDinamico("Maria", 5000.00);
-        assertTrue(impossivel.isEmpty(), "Não existe Maria ganhando 5k");
-
-        // Cenário D: Sem filtros (Todos)
-        List<Funcionario> todos = buscarFuncionariosDinamico(null, null);
-        assertEquals(3, todos.size());
-
-        logger.info("Teste de Criteria API finalizado com sucesso.");
-    }
-    
     @Test
     public void testAtualizarFuncionarioGerenciado() {
         logger.info("--- Executando testAtualizarFuncionarioGerenciado (Sem Merge) ---");
 
-        Funcionario func = buscarFuncionarioPorNome("João Silva");
+        Funcionario func = buscarFuncionarioPorNomeJPQL("João Silva");
         assertNotNull(func);
         Long idOriginal = func.getId();
         
@@ -156,7 +122,7 @@ public class FuncionarioTest extends GenericTest {
     public void testAtualizarFuncionarioComMerge() {
         logger.info("--- Executando testAtualizarFuncionarioComMerge ---");
         
-        Funcionario func = buscarFuncionarioPorNome("João Silva");
+        Funcionario func = buscarFuncionarioPorNomeJPQL("João Silva");
         assertNotNull(func);
         Long idOriginal = func.getId();
         
@@ -181,7 +147,7 @@ public class FuncionarioTest extends GenericTest {
     public void testRemoverFuncionarioECascade() {
         logger.info("--- Executando testRemoverFuncionarioECascade ---");
         
-        Funcionario func = buscarFuncionarioPorNome("João Silva");
+        Funcionario func = buscarFuncionarioPorNomeJPQL("João Silva");
         assertNotNull(func);
         
         assertNotNull(func.getDadosBancarios());
@@ -211,12 +177,29 @@ public class FuncionarioTest extends GenericTest {
     }
     
     @Test
+    public void testBuscarPorCargoJPQL() {
+        logger.info("--- Teste JPQL: Busca por Cargo ---");
+        List<Funcionario> seniors = buscarFuncionariosPorCargoJPQL("Padeiro Senior");
+        assertEquals(1, seniors.size());
+        assertEquals("João Silva", seniors.get(0).getNome());
+        logger.info("Encontrado 1 Padeiro Senior.");
+    }
+
+    @Test
+    public void testContarFuncionariosJPQL() {
+        logger.info("--- Teste JPQL: Contagem por Padaria ---");
+        Long qtd = contarFuncionariosDaPadariaJPQL("Padaria do Melhor Teste");
+        assertEquals(3L, qtd);
+        logger.info("Total de funcionários na Padaria 1: {}", qtd);
+    }
+    
+    @Test
     public void testEqualsAndHashCode() {
         logger.info("--- Executando testEqualsAndHashCode ---");
 
-        Funcionario f1 = buscarFuncionarioPorId(2);
-        Funcionario f2 = buscarFuncionarioPorId(3);
-        Funcionario f3 = buscarFuncionarioPorId(2);
+        Funcionario f1 = buscarFuncionarioPorIdJPQL(2);
+        Funcionario f2 = buscarFuncionarioPorIdJPQL(3);
+        Funcionario f3 = buscarFuncionarioPorIdJPQL(2);
 
         assertFalse(f1.equals(f2), "Os objetos não devem ser iguais");
         assertTrue(f1.equals(f3), "Os objetos devem ser iguais");
