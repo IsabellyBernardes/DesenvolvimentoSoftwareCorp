@@ -15,7 +15,7 @@ public class PaoTest extends GenericTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PaoTest.class);
     
-    // MÉTODOS AUXILIARES ORIGINAIS (JPQL)
+    // MÉTODOS AUXILIARES ORIGINAIS
 
     private Pao buscarPaoPorNome(String nome) {
         String jpql = "SELECT p FROM Pao p WHERE p.nomePao = :nome";
@@ -87,7 +87,6 @@ public class PaoTest extends GenericTest {
     @Test
     public void testBuscarPaoComIngredientesFetch() {
         logger.info("--- JPQL: JOIN FETCH ---");
-        // ID 2 (Pão de Queijo) tem ingredientes no dataset
         Pao pao = buscarPaoComIngredientesFetchJPQL(2L);
         assertNotNull(pao);
         assertFalse(pao.getIngredientes().isEmpty());
@@ -127,7 +126,7 @@ public class PaoTest extends GenericTest {
         logger.info("Pão na faixa: {}", lista.get(0).getNomePao());
     }
 
-    // CRUD e LOgicas Antigas
+    // Testes antigos
 
     @Test
     public void testEncontrarPaoDoDataSetEIngredientes() {

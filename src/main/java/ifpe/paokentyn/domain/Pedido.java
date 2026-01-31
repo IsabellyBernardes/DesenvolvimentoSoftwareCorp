@@ -55,6 +55,13 @@ public class Pedido {
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
+ 
+    public Pedido() {}
+
+    public Pedido(Double valorTotal, java.util.Date dataPedido) {
+        this.valorTotal = valorTotal;
+        this.dataPedido = dataPedido;
+    }
 }
 
 
