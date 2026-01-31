@@ -78,4 +78,13 @@ public class Pao implements Serializable {
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
+    
+    // Construtor Vazio
+    public Pao() {}
+
+    // Construtor para o SELECT NEW 
+    public Pao(String nomePao, Double preco) {
+        this.nomePao = nomePao;
+        this.preco = preco;
+    }
 }
