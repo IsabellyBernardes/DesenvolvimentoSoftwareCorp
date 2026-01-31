@@ -6,16 +6,13 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TarefaTest extends GenericTest {
 
     private static final Logger logger = LoggerFactory.getLogger(TarefaTest.class);
+
+    // MÉTODOS AUXILIARES ORIGINAIS
 
     private Tarefa buscarTarefaPorDescricao(String descricao) {
         String jpql = "SELECT t FROM Tarefa t WHERE t.descricao = :descricao";
@@ -27,7 +24,7 @@ public class TarefaTest extends GenericTest {
     private Tarefa buscarTarefaPorId(int id) {
         String jpql = "SELECT t FROM Tarefa t WHERE t.id = :id";
         TypedQuery<Tarefa> query = em.createQuery(jpql, Tarefa.class);
-        query.setParameter("id", id);
+        query.setParameter("id", (long) id);
         return query.getSingleResult();
     }
 
@@ -38,13 +35,90 @@ public class TarefaTest extends GenericTest {
         return query.getSingleResult();
     }
 
+    // JQPL NOVOS
+
+    private Tarefa buscarTarefaComFuncionarioFetchJPQL(Long id) {
+        // 1. JOIN FETCH
+        String jpql = "SELECT t FROM Tarefa t JOIN FETCH t.funcionario WHERE t.id = :id";
+        TypedQuery<Tarefa> query = em.createQuery(jpql, Tarefa.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
+
+    private List<Object[]> contarTarefasPorFuncionarioJPQL() {
+        // 2. GROUP BY + HAVING
+        String jpql = "SELECT t.funcionario.nome, COUNT(t) FROM Tarefa t " +
+                      "GROUP BY t.funcionario.nome HAVING COUNT(t) >= 1";
+        return em.createQuery(jpql, Object[].class).getResultList();
+    }
+
+    private List<Tarefa> buscarResumoTarefaJPQL() {
+        // 3. NEW
+        String jpql = "SELECT NEW ifpe.paokentyn.domain.Tarefa(t.descricao, t.dataPrevisao) FROM Tarefa t";
+        return em.createQuery(jpql, Tarefa.class).getResultList();
+    }
+
+    private List<Tarefa> buscarTarefasPendentesJPQL() {
+        // 4.  NULL
+        String jpql = "SELECT t FROM Tarefa t WHERE t.dataConclusao IS NULL";
+        return em.createQuery(jpql, Tarefa.class).getResultList();
+    }
+
+    private List<Tarefa> buscarTarefasNaoConcluidasJPQL() {
+        // 5. BOOLEAN
+        String jpql = "SELECT t FROM Tarefa t WHERE t.concluida = false";
+        return em.createQuery(jpql, Tarefa.class).getResultList();
+    }
+
+    //  NOVOS TESTES JPQL 
+
+    @Test
+    public void testJoinFetchFuncionario() {
+        logger.info("--- JPQL: JOIN FETCH ---");
+        Tarefa t = buscarTarefaComFuncionarioFetchJPQL(1L);
+        assertNotNull(t);
+        assertNotNull(t.getFuncionario());
+        logger.info("Tarefa recuperada: {} | Funcionario: {}", t.getDescricao(), t.getFuncionario().getNome());
+    }
+
+    @Test
+    public void testGroupTarefas() {
+        logger.info("--- JPQL: GROUP BY + HAVING ---");
+        List<Object[]> lista = contarTarefasPorFuncionarioJPQL();
+        assertFalse(lista.isEmpty());
+        logger.info("Agrupamento: Funcionario {} tem {} tarefas", lista.get(0)[0], lista.get(0)[1]);
+    }
+
+    @Test
+    public void testNewResumo() {
+        logger.info("--- JPQL: NEW ---");
+        List<Tarefa> lista = buscarResumoTarefaJPQL();
+        assertFalse(lista.isEmpty());
+        assertNull(lista.get(0).getId()); 
+        assertNotNull(lista.get(0).getDescricao());
+    }
+
+    @Test
+    public void testIsNull() {
+        logger.info("--- JPQL: IS NULL ---");
+        List<Tarefa> lista = buscarTarefasPendentesJPQL();
+        assertFalse(lista.isEmpty());
+    }
+
+    @Test
+    public void testBooleanCheck() {
+        logger.info("--- JPQL: BOOLEAN ---");
+        List<Tarefa> lista = buscarTarefasNaoConcluidasJPQL();
+        assertFalse(lista.isEmpty());
+    }
+
+  // Testes antigos
+
     @Test
     public void testEncontrarTarefaDoDataSet() {
         logger.info("Executando testEncontrarTarefaDoDataSet (Dinâmico)");
-
         Tarefa tarefa = buscarTarefaPorDescricao("Checar estoque de farinha");
-        logger.debug("Tarefa buscada: {}", tarefa);
-
+        
         assertNotNull(tarefa, "Deveria existir a tarefa de checar estoque");
         assertEquals("Checar estoque de farinha", tarefa.getDescricao());
         assertEquals(false, tarefa.getConcluida());
@@ -54,15 +128,11 @@ public class TarefaTest extends GenericTest {
         
         assertNotNull(tarefa.getFuncionario().getPadaria(), "A padaria do funcionário não deveria ser nula");
         assertEquals("Padaria do Melhor Teste", tarefa.getFuncionario().getPadaria().getNome());
-        
-        logger.info("Tarefa encontrada: '{}' para o funcionário {}", 
-                    tarefa.getDescricao(), tarefa.getFuncionario().getNome());
     }
 
     @Test
     public void testPersistirTarefa() {
         logger.info("Executando testPersistirTarefa");
-
         Funcionario funcExistente = buscarFuncionarioPorNome("João Silva");
         assertNotNull(funcExistente, "Funcionário do dataset não encontrado");
 
@@ -71,7 +141,6 @@ public class TarefaTest extends GenericTest {
         novaTarefa.setDataInicio(new Date());
         novaTarefa.setDataPrevisao(new Date(System.currentTimeMillis() + 86400000));
         novaTarefa.setConcluida(false);
-
         novaTarefa.setFuncionario(funcExistente);
 
         em.persist(novaTarefa); 
@@ -82,76 +151,16 @@ public class TarefaTest extends GenericTest {
         
         Tarefa tarefaDoDataset = buscarTarefaPorDescricao("Checar estoque de farinha");
         assertNotEquals(tarefaDoDataset.getId(), novaTarefa.getId());
-
-        logger.info("Tarefa persistida: '{}' com ID: {}", 
-                    novaTarefa.getDescricao(), novaTarefa.getId());
-    }
-    
-    // --- MÉTODO AUXILIAR (Criteria API) ---
-    private List<Tarefa> buscarTarefasDinamico(String parteDescricao, Boolean concluida) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Tarefa> query = cb.createQuery(Tarefa.class);
-        Root<Tarefa> root = query.from(Tarefa.class);
-        List<Predicate> condicoes = new ArrayList<>();
-
-        if (parteDescricao != null && !parteDescricao.isEmpty()) {
-            condicoes.add(cb.like(cb.lower(root.get("descricao")), "%" + parteDescricao.toLowerCase() + "%"));
-        }
-
-        if (concluida != null) {
-            // isTrue ou isFalse dependendo do parametro
-            if (concluida) {
-                condicoes.add(cb.isTrue(root.get("concluida")));
-            } else {
-                condicoes.add(cb.isFalse(root.get("concluida")));
-            }
-        }
-
-        query.where(cb.and(condicoes.toArray(new Predicate[0])));
-        return em.createQuery(query).getResultList();
-    }
-
-    // --- TESTE ---
-    @Test
-    public void testBuscaDinamicaComCriteria() {
-        logger.info("--- Executando testBuscaDinamicaComCriteria (Tarefa) ---");
-
-        // Cenário A: Filtrar por parte da descrição ("estoque")
-        // Deve achar "Checar estoque de farinha"
-        List<Tarefa> tarefasEstoque = buscarTarefasDinamico("estoque", null);
-        assertEquals(1, tarefasEstoque.size());
-        assertTrue(tarefasEstoque.get(0).getDescricao().contains("estoque"));
-        logger.info("Filtro Texto OK: {}", tarefasEstoque.get(0).getDescricao());
-
-        // Cenário B: Filtrar por Status (Apenas Pendentes/False)
-        // Todas as 3 do dataset são false
-        List<Tarefa> pendentes = buscarTarefasDinamico(null, false);
-        assertEquals(3, pendentes.size(), "Deveria trazer as 3 tarefas pendentes");
-
-        // Cenário C: Filtrar por Status (Apenas Concluídas/True)
-        // Nenhuma está concluída no dataset
-        List<Tarefa> concluidas = buscarTarefasDinamico(null, true);
-        assertTrue(concluidas.isEmpty(), "Não deveria haver tarefas concluídas no dataset");
-
-        // Cenário D: Combinação Específica (Descrição "pães" E Pendente)
-        // Deve achar "Assar pães"
-        List<Tarefa> assar = buscarTarefasDinamico("pães", false);
-        assertEquals(1, assar.size());
-        assertEquals("Assar pães", assar.get(0).getDescricao());
-
-        logger.info("Teste de Criteria API finalizado com sucesso.");
     }
     
     @Test
     public void testAtualizarTarefaGerenciada() {
         logger.info("--- Executando testAtualizarTarefaGerenciada (Sem Merge) ---");
-
         Tarefa tarefa = buscarTarefaPorDescricao("Checar estoque de farinha");
         assertNotNull(tarefa);
         Long idOriginal = tarefa.getId();
         
         String novaDescricao = "Verificar validade da farinha";
-
         tarefa.setDescricao(novaDescricao);
 
         em.flush(); 
@@ -159,14 +168,11 @@ public class TarefaTest extends GenericTest {
 
         Tarefa tarefaAtualizada = em.find(Tarefa.class, idOriginal);
         assertEquals(novaDescricao, tarefaAtualizada.getDescricao());
-        
-        logger.info("Tarefa atualizada automaticamente via Dirty Checking.");
     }
 
     @Test
     public void testAtualizarTarefaComMerge() {
         logger.info("Executando testAtualizarTarefaComMerge");
-
         Tarefa tarefa = buscarTarefaPorDescricao("Checar estoque de farinha");
         assertNotNull(tarefa);
         Long idOriginal = tarefa.getId();
@@ -184,44 +190,35 @@ public class TarefaTest extends GenericTest {
         Tarefa tarefaAtualizada = em.find(Tarefa.class, idOriginal);
         assertTrue(tarefaAtualizada.getConcluida(), "A tarefa deveria estar concluída");
         assertEquals("Estoque verificado e atualizado", tarefaAtualizada.getDescricao());
-
-        logger.info("Tarefa atualizada: Concluída={}, Descrição='{}'", 
-                tarefaAtualizada.getConcluida(), tarefaAtualizada.getDescricao());
     }
 
     @Test
     public void testRemoverTarefa() {
         logger.info("Executando testRemoverTarefa");
-
         Tarefa tarefa = buscarTarefaPorDescricao("Checar estoque de farinha");
         assertNotNull(tarefa);
         
         Long idFuncionario = tarefa.getFuncionario().getId();
 
         em.remove(tarefa); 
-
         em.flush();
         em.clear();
 
         String jpqlCheck = "SELECT t FROM Tarefa t WHERE t.descricao = :desc";
-        var lista = em.createQuery(jpqlCheck, Tarefa.class)
-                      .setParameter("desc", "Checar estoque de farinha")
-                      .getResultList();
+        List<Tarefa> lista = em.createQuery(jpqlCheck, Tarefa.class)
+                              .setParameter("desc", "Checar estoque de farinha")
+                              .getResultList();
         assertTrue(lista.isEmpty(), "A tarefa deveria ter sido removida");
         
         assertNotNull(em.find(Funcionario.class, idFuncionario), "O funcionário NÃO deve ser removido");
-
-        logger.info("Tarefa removida com sucesso.");
     }
     
     @Test
     public void testEqualsAndHashCode() {
         logger.info("--- Executando testEqualsAndHashCode ---");
-
         Tarefa t1 = buscarTarefaPorId(2);
         Tarefa t2 = buscarTarefaPorId(3);
         Tarefa t3 = buscarTarefaPorId(2);
-
         assertFalse(t1.equals(t2), "Os objetos não devem ser iguais");
         assertTrue(t1.equals(t3), "Os objetos devem ser iguais");
         assertEquals(t1.hashCode(), t3.hashCode(), "Hashcodes devem ser iguais");

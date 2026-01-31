@@ -75,4 +75,11 @@ public class Tarefa {
 
         return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
+    public Tarefa() {}
+    
+    public Tarefa(String descricao, Date dataPrevisao) {
+        this.descricao = descricao;
+        this.dataPrevisao = dataPrevisao;
+    }
 }
+
