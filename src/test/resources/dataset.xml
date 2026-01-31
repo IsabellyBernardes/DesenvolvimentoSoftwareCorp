@@ -48,15 +48,19 @@
     <TB_PAO TXT_NOME_PAO="Pão Integral" NUM_PRECO="5.50"/> 
     <TB_PAO TXT_NOME_PAO="Pão de Queijo" NUM_PRECO="3.00" BIN_IMAGEM="..."/>
     <TB_PAO TXT_NOME_PAO="Pão de Sal" NUM_PRECO="3.50" BIN_IMAGEM="..."/>
+    <TB_PAO TXT_NOME_PAO="Pão de Gergigilim" NUM_PRECO="5.50" BIN_IMAGEM="..."/>
 
 
     <TB_INGREDIENTE TXT_NOME="Farinha de Trigo"/>
     <TB_INGREDIENTE TXT_NOME="Ovos"/>
     <TB_INGREDIENTE TXT_NOME="Polvilho"/>
+    <TB_INGREDIENTE TXT_NOME="Gergilim"/>
+
 
     <TB_PAO_INGREDIENTE ID_PAO="1" ID_INGREDIENTE="1"/> 
     <TB_PAO_INGREDIENTE ID_PAO="2" ID_INGREDIENTE="2"/> 
     <TB_PAO_INGREDIENTE ID_PAO="2" ID_INGREDIENTE="3"/> 
+    <TB_PAO_INGREDIENTE ID_PAO="4" ID_INGREDIENTE="4"/> 
 
     <TB_FORNADA ID_PADARIA="1" 
                 DT_FORNADA="2025-11-09" 
@@ -92,7 +96,7 @@
                DT_PEDIDO="2025-11-10 09:30:00"/>
     
     <TB_PEDIDO NUM_VALOR_TOTAL="55.00" 
-               DT_PEDIDO="2025-11-10 09:30:00"/>
+               DT_PEDIDO="2025-11-15 09:30:00"/>
 
     <TB_ITEM_PEDIDO ID_PEDIDO="1" 
                     ID_PAO="1" 

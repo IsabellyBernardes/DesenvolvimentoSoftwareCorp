@@ -118,7 +118,7 @@ public class PaoTest extends GenericTest {
 
         // Cenário D: Sem filtros (Deve trazer TODOS: Integral, Queijo e Sal)
         List<Pao> todos = buscarPaesComFiltroDinamico(null, null);
-        assertEquals(3, todos.size(), "Deveria trazer todos os 3 pães do dataset");
+        assertEquals(4, todos.size(), "Deveria trazer todos os 4 pães do dataset");
         
         logger.info("Teste de Criteria API (Filtros Dinâmicos) finalizado com sucesso.");
     }
