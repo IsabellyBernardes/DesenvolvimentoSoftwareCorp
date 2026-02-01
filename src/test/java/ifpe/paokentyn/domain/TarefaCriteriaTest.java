@@ -12,7 +12,6 @@ public class TarefaCriteriaTest extends GenericTest {
     
     private static final Logger logger = LoggerFactory.getLogger(TarefaCriteriaTest.class);
 
-     // Movidos do original
     private List<Tarefa> buscarTarefasDinamico(String parteDescricao, Boolean concluida) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tarefa> query = cb.createQuery(Tarefa.class);
@@ -35,7 +34,6 @@ public class TarefaCriteriaTest extends GenericTest {
         return em.createQuery(query).getResultList();
     }
 
-    // Movidos do original
     @Test
     public void testBuscaDinamicaComCriteria() {
         logger.info("--- Executando testBuscaDinamicaComCriteria (Original Movido) ---");
@@ -58,8 +56,6 @@ public class TarefaCriteriaTest extends GenericTest {
         assertEquals(1, assar.size());
         assertEquals("Assar pães", assar.get(0).getDescricao());
     }
-
-     //CRITERIA 
 
     @Test
     public void testCriteriaJoinFetch() {

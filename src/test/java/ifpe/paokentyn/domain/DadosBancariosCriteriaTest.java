@@ -193,7 +193,7 @@ public class DadosBancariosCriteriaTest extends GenericTest {
         List<DadosBancarios> lista = em.createQuery(query).getResultList();
         
         logger.info("Contas de funcionários ocupados: {}", lista.size());
-        assertTrue(lista.size() > 0);
+        assertTrue(!lista.isEmpty());
     }
 
     @Test

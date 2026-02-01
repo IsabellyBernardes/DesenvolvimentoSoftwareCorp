@@ -12,7 +12,6 @@ public class PaoCriteriaTest extends GenericTest {
     
     private static final Logger logger = LoggerFactory.getLogger(PaoCriteriaTest.class);
 
-    // Movidos do original
     private List<Pao> buscarPaesComFiltroDinamico(String parteNome, Double precoMaximo) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Pao> query = cb.createQuery(Pao.class);
@@ -29,7 +28,6 @@ public class PaoCriteriaTest extends GenericTest {
         return em.createQuery(query).getResultList();
     }
 
-    // Movidos do original 
     @Test
     public void testBuscaDinamicaComCriteria() {
         logger.info("--- Executando testBuscaDinamicaComCriteria (Original) ---");
@@ -48,19 +46,15 @@ public class PaoCriteriaTest extends GenericTest {
         assertEquals(4, todos.size(), "Deveria trazer todos os 4 pães do dataset");
     }
 
-    //CRITERIA 
-
    @Test
     public void testCriteriaJoinFetch() {
         logger.info("--- Criteria: JOIN FETCH ---");
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Pao> c = cb.createQuery(Pao.class);
         Root<Pao> root = c.from(Pao.class);
-        // c.distinct(true) não deu certo, o Derby reclamou; 
      
         root.fetch("ingredientes", JoinType.LEFT);
         c.where(cb.equal(root.get("id"), 2L)); 
-        // getResultList() para aceitar as linhas duplicadas do Join
         List<Pao> resultados = em.createQuery(c).getResultList();
         
         assertFalse(resultados.isEmpty());

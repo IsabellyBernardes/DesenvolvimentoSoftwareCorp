@@ -12,7 +12,6 @@ public class PedidoCriteriaTest extends GenericTest {
     
     private static final Logger logger = LoggerFactory.getLogger(PedidoCriteriaTest.class);
 
-    // Movidos do original
     private List<Pedido> buscarPedidosDinamico(Double valorMinimo, Double valorMaximo) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Pedido> query = cb.createQuery(Pedido.class);
@@ -31,7 +30,6 @@ public class PedidoCriteriaTest extends GenericTest {
         return em.createQuery(query).getResultList();
     }
 
-    // Movidos do original
     @Test
     public void testBuscaDinamicaComCriteria() {
         logger.info("--- Executando testBuscaDinamicaComCriteria (Original Movido) ---");
@@ -67,7 +65,6 @@ public class PedidoCriteriaTest extends GenericTest {
         
         c.where(cb.equal(root.get("id"), 1L)); 
         
-        // getResultList() para evitar erro com OneToMany
         List<Pedido> resultados = em.createQuery(c).getResultList();
         
         assertFalse(resultados.isEmpty());
