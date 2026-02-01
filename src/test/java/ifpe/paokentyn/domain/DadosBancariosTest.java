@@ -7,10 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,7 +147,7 @@ public class DadosBancariosTest extends GenericTest {
 
         List<DadosBancarios> lista = buscarPorNomeBancoJPQL("Teste");
 
-        assertEquals(3, lista.size(), "Deveria encontrar 3 bancos com o termo 'Teste'");
+        assertEquals(4, lista.size(), "Deveria encontrar 3 bancos com o termo 'Teste'");
         
         logger.info("Sucesso. Encontrados: {} bancos.", lista.size());
     }

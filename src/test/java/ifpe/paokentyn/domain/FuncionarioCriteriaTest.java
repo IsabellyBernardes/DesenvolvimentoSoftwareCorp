@@ -4,9 +4,11 @@
  */
 package ifpe.paokentyn.domain;
 
+import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.junit.jupiter.api.Test;
@@ -20,13 +22,16 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FuncionarioCriteriaTest extends GenericTest{
+public class FuncionarioCriteriaTest extends GenericTest {
+    
     private static final Logger logger = LoggerFactory.getLogger(FuncionarioCriteriaTest.class);
 
     @Test
     public void testCriteriaBuscaDinamicaNomeSalario() {
-        logger.info("--- Teste 1: Criteria - Busca Dinâmica (Nome & Salário) ---");
+        logger.info("--- Busca Dinâmica (Nome & Salário) ---");
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Funcionario> query = cb.createQuery(Funcionario.class);
@@ -34,7 +39,6 @@ public class FuncionarioCriteriaTest extends GenericTest{
         List<Predicate> condicoes = new ArrayList<>();
 
         condicoes.add(cb.like(cb.lower(root.get("nome")), "%maria%"));
-
         condicoes.add(cb.ge(root.get("salario"), 3000.00));
 
         query.where(cb.and(condicoes.toArray(new Predicate[0])));
@@ -48,7 +52,7 @@ public class FuncionarioCriteriaTest extends GenericTest{
 
     @Test
     public void testCriteriaBuscaPorCargoExato() {
-        logger.info("--- Teste 2: Criteria - Busca por Cargo Exato ---");
+        logger.info("--- Busca por Cargo Exato ---");
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Funcionario> query = cb.createQuery(Funcionario.class);
@@ -65,7 +69,7 @@ public class FuncionarioCriteriaTest extends GenericTest{
 
     @Test
     public void testCriteriaBuscaPorDataContratacao() {
-        logger.info("--- Teste 3: Criteria - Busca por Data de Contratação ---");
+        logger.info("--- Busca por Data de Contratação ---");
 
         LocalDate ld = LocalDate.of(2022, 5, 15);
         Date dataAlvo = Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -84,7 +88,7 @@ public class FuncionarioCriteriaTest extends GenericTest{
 
     @Test
     public void testCriteriaBuscaComJoinPadaria() {
-        logger.info("--- Teste 4: Criteria - Busca com JOIN (Funcionários de uma Padaria) ---");
+        logger.info("--- Busca com JOIN (Funcionários de uma Padaria) ---");
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Funcionario> query = cb.createQuery(Funcionario.class);
@@ -102,7 +106,7 @@ public class FuncionarioCriteriaTest extends GenericTest{
 
     @Test
     public void testCriteriaCountTotalFuncionarios() {
-        logger.info("--- Teste 5: Criteria - COUNT (Total de Funcionários) ---");
+        logger.info("--- COUNT (Total de Funcionários) ---");
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
@@ -114,5 +118,120 @@ public class FuncionarioCriteriaTest extends GenericTest{
 
         assertEquals(3L, total);
         logger.info("Sucesso! Total de funcionários no banco: {}", total);
+    }
+
+
+    @Test
+    public void testCriteriaLeftJoinTarefas() {
+        logger.info("--- LEFT JOIN (Funcionario -> Tarefas) ---");
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = cb.createTupleQuery();
+        Root<Funcionario> root = query.from(Funcionario.class);
+        
+        Join<Object, Object> joinTarefas = root.join("tarefas", JoinType.LEFT);
+        
+        query.multiselect(root.get("nome"), joinTarefas.get("descricao"));
+        
+        List<Tuple> resultado = em.createQuery(query).getResultList();
+        
+        for (Tuple t : resultado) {
+            logger.info("Funcionario: {} | Tarefa: {}", t.get(0), t.get(1));
+        }
+        assertTrue(resultado.size() >= 3);
+    }
+
+    @Test
+    public void testCriteriaPathExpression() {
+        logger.info("--- Path Expression (Navegação) ---");
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Funcionario> query = cb.createQuery(Funcionario.class);
+        Root<Funcionario> root = query.from(Funcionario.class);
+        
+        query.where(cb.equal(root.get("dadosBancarios").get("banco"), "Banco Teste S.A."));
+        
+        List<Funcionario> lista = em.createQuery(query).getResultList();
+        assertEquals(1, lista.size());
+        assertEquals("João Silva", lista.get(0).getNome());
+        logger.info("Sucesso na navegação por path expression.");
+    }
+
+    @Test
+    public void testCriteriaMaxMinSalario() {
+        logger.info("--- MAX e MIN (Salário) ---");
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = cb.createTupleQuery();
+        Root<Funcionario> root = query.from(Funcionario.class);
+        
+        query.multiselect(
+            cb.max(root.get("salario")),
+            cb.min(root.get("salario"))
+        );
+        
+        Tuple resultado = em.createQuery(query).getSingleResult();
+        
+        Double max = resultado.get(0, Double.class);
+        Double min = resultado.get(1, Double.class);
+        
+        logger.info("Maior Salário: {}", max);
+        logger.info("Menor Salário: {}", min);
+        
+        assertNotNull(max);
+        assertNotNull(min);
+    }
+
+    @Test
+    public void testCriteriaDistinctCargos() {
+        logger.info("--- DISTINCT (Cargos Únicos) ---");
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<Funcionario> root = query.from(Funcionario.class);
+        
+        query.select(root.get("cargo")).distinct(true);
+        
+        List<String> cargos = em.createQuery(query).getResultList();
+        
+        logger.info("Cargos encontrados: {}", cargos);
+        assertEquals(3, cargos.size());
+    }
+
+    @Test
+    public void testCriteriaCollectionManipulation() {
+        logger.info("--- Manipulação de Coleção (IS NOT EMPTY) ---");
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Funcionario> query = cb.createQuery(Funcionario.class);
+        Root<Funcionario> root = query.from(Funcionario.class);
+        
+        query.where(cb.isNotEmpty(root.get("tarefas")));
+        
+        List<Funcionario> ocupados = em.createQuery(query).getResultList();
+        
+        assertTrue(ocupados.size() > 0);
+        logger.info("Funcionários com tarefas: {}", ocupados.size());
+    }
+
+    @Test
+    public void testCriteriaNewProjection() {
+        logger.info("--- Simulação de NEW (DTO Projection com Tuple) ---");
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = cb.createTupleQuery();
+        Root<Funcionario> root = query.from(Funcionario.class);
+        
+        query.multiselect(
+            root.get("nome").alias("nomeFunc"), 
+            root.get("cargo").alias("cargoFunc")
+        );
+        
+        List<Tuple> lista = em.createQuery(query).getResultList();
+        
+        for (Tuple t : lista) {
+            logger.info("DTO -> Nome: {}, Cargo: {}", t.get("nomeFunc"), t.get("cargoFunc"));
+        }
+        assertTrue(lista.size() > 0);
     }
 }

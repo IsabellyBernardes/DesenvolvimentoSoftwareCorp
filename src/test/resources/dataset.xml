@@ -20,6 +20,10 @@
                         TXT_AGENCIA="0002"
                         TXT_CONTA="12345-2" />
     
+    <TB_DADOS_BANCARIOS TXT_BANCO="Banco Teste S.A. 2"
+                        TXT_AGENCIA="0004"
+                        TXT_CONTA="12345-4" />
+    
     <TB_DADOS_BANCARIOS TXT_BANCO="Banco Teste S.A. 3"
                         TXT_AGENCIA="0003"
                         TXT_CONTA="12345-3" />
@@ -35,7 +39,7 @@
                     TXT_NOME="Maria Silva" 
                     TXT_CARGO="Padeiro Pleno"
                     DT_CONTRATACAO="2022-05-15"
-                    NUM_SALARIO="3200.00"
+                    NUM_SALARIO="3400.00"
                     ID_DADOS_BANCARIOS="2" />
         
     <TB_FUNCIONARIO ID_PADARIA="1" 
