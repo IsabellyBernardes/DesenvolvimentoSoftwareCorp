@@ -10,19 +10,19 @@ public class ItemPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
     
-    @NotNull
-    @Min(value = 1)
+    @NotNull(message = "{itempedido.quantidade.notnull}")
+    @Min(value = 1, message = "{itempedido.quantidade.min}")
     @Column(name = "NUM_QUANTIDADE", nullable = false)
     private Integer quantidade;
 
+    @NotNull(message = "{itempedido.pedido.notnull}")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_PEDIDO", nullable = false, referencedColumnName = "ID")
-    @NotNull
     private Pedido pedido;
     
+    @NotNull(message = "{itempedido.pao.notnull}")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PAO", nullable = false, referencedColumnName = "ID")
-    @NotNull
     private Pao pao;
     
     @ManyToOne(fetch = FetchType.LAZY)

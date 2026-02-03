@@ -3,6 +3,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import org.hibernate.validator.constraints.br.CNPJ;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "TB_PADARIA")
@@ -11,17 +13,18 @@ public class Padaria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @NotBlank
-    @Size(max = 255) 
+    @NotBlank(message = "{padaria.nome.notblank}")
+    @Size(max = 255, message = "{padaria.nome.size}") 
     @Column(name = "TXT_NOME", nullable = false, length = 255)
     private String nome;
     
-    @Size(min = 9, max = 9)
+    @Size(min = 9, max = 9, message = "{padaria.cep.size}")
+    @Pattern(regexp = "\\d{5}-\\d{3}", message = "{padaria.cep.pattern}")
     @Column(name = "TXT_CEP", length = 9)
     private String cep;
     
-    @NotBlank
-    @Size(min = 14, max = 14)
+    @NotBlank(message = "{padaria.cnpj.notblank}")
+    @CNPJ(message = "{padaria.cnpj.invalido}")
     @Column(name = "TXT_CNPJ", length = 14, nullable = false, unique = true)
     private String cnpj;
     

@@ -33,6 +33,8 @@
                     TXT_CARGO="Padeiro Senior"
                     DT_CONTRATACAO="2022-05-15"
                     NUM_SALARIO="3200.00"
+                    TXT_CPF="12345678909" 
+                    TXT_EMAIL="joao@padaria.com"
                     ID_DADOS_BANCARIOS="1" />
     
     <TB_FUNCIONARIO ID_PADARIA="1" 
@@ -40,6 +42,8 @@
                     TXT_CARGO="Padeiro Pleno"
                     DT_CONTRATACAO="2022-05-15"
                     NUM_SALARIO="3400.00"
+                    TXT_CPF="98765432100" 
+                    TXT_EMAIL="maria@padaria.com"
                     ID_DADOS_BANCARIOS="2" />
         
     <TB_FUNCIONARIO ID_PADARIA="1" 
@@ -47,19 +51,19 @@
                     TXT_CARGO="Padeiro Junior"
                     DT_CONTRATACAO="2022-05-15"
                     NUM_SALARIO="3200.00"
+                    TXT_CPF="11122233344" 
+                    TXT_EMAIL="pedro@padaria.com"
                     ID_DADOS_BANCARIOS="3" />
 
     <TB_PAO TXT_NOME_PAO="Pão Integral" NUM_PRECO="5.50"/> 
-    <TB_PAO TXT_NOME_PAO="Pão de Queijo" NUM_PRECO="3.00" BIN_IMAGEM="..."/>
-    <TB_PAO TXT_NOME_PAO="Pão de Sal" NUM_PRECO="3.50" BIN_IMAGEM="..."/>
-    <TB_PAO TXT_NOME_PAO="Pão de Gergigilim" NUM_PRECO="5.50" BIN_IMAGEM="..."/>
-
+    <TB_PAO TXT_NOME_PAO="Pão de Queijo" NUM_PRECO="3.00"/>
+    <TB_PAO TXT_NOME_PAO="Pão de Sal" NUM_PRECO="3.50"/>
+    <TB_PAO TXT_NOME_PAO="Pão de Gergigilim" NUM_PRECO="5.50"/>
 
     <TB_INGREDIENTE TXT_NOME="Farinha de Trigo"/>
     <TB_INGREDIENTE TXT_NOME="Ovos"/>
     <TB_INGREDIENTE TXT_NOME="Polvilho"/>
     <TB_INGREDIENTE TXT_NOME="Gergilim"/>
-
 
     <TB_PAO_INGREDIENTE ID_PAO="1" ID_INGREDIENTE="1"/> 
     <TB_PAO_INGREDIENTE ID_PAO="2" ID_INGREDIENTE="2"/> 
@@ -116,7 +120,6 @@
                     ID_PAO="3" 
                     ID_FORNADA="1" 
                     NUM_QUANTIDADE="5"/>
-    
     
     <TB_ITEM_PEDIDO ID_PEDIDO="2" 
                     ID_PAO="1" 

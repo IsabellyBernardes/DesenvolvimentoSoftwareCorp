@@ -17,13 +17,13 @@ public class Pao implements Serializable {
     @Column(name = "ID") 
     private Long id;
 
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "{pao.nome.notblank}")
+    @Size(max = 100, message = "{pao.nome.size}")
     @Column(name = "TXT_NOME_PAO", nullable = false, length = 100)
     private String nomePao;
 
-    @Positive
-    @NotNull
+    @NotNull(message = "{pao.preco.notnull}")
+    @Positive(message = "{pao.preco.positive}")
     @Column(name = "NUM_PRECO", nullable = false)
     private Double preco;
 

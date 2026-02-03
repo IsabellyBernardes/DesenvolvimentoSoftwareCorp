@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
 
@@ -13,18 +14,19 @@ public class Tarefa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
     
+    @NotNull(message = "{tarefa.funcionario.notnull}")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FUNCIONARIO", nullable = false, referencedColumnName = "ID")
-    @NotNull
     private Funcionario funcionario;
     
-    @NotBlank
-    @Size(max = 500)
+    @NotBlank(message = "{tarefa.descricao.notblank}")
+    @Size(max = 500, message = "{tarefa.descricao.size}")
     @Column(name = "TXT_DESCRICAO", nullable = false, length = 500)
     private String descricao;
     
+    @NotNull(message = "{tarefa.datainicio.notnull}")
+    @PastOrPresent(message = "{tarefa.datainicio.pastorpresent}")
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
     @Column(name = "DT_INICIO", nullable = false)
     private Date dataInicio;
     
@@ -32,13 +34,13 @@ public class Tarefa {
     @Column(name = "DT_CONCLUSAO")
     private Date dataConclusao;
     
+    @NotNull(message = "{tarefa.dataprevisao.notnull}")
+    @Future(message = "{tarefa.dataprevisao.future}")
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
-    @Future
     @Column(name = "DT_PREVISAO", nullable = false)
     private Date dataPrevisao;
     
-    @NotNull
+    @NotNull(message = "{tarefa.concluida.notnull}")
     @Column(name = "FLG_CONCLUIDA", nullable = false)
     private Boolean concluida;
 

@@ -12,19 +12,19 @@ public class Fornada {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
     
+    @NotNull(message = "{fornada.padaria.notnull}")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PADARIA", nullable = false, referencedColumnName = "ID")
-    @NotNull
     private Padaria padaria;
     
+    @NotNull(message = "{fornada.data.notnull}")
+    @Past(message = "{fornada.data.past}")
     @Temporal(TemporalType.DATE)
-    @NotNull
-    @Past
     @Column(name = "DT_FORNADA", nullable = false)
     private Date dataFornada;
     
+    @NotNull(message = "{fornada.hora.notnull}")
     @Temporal(TemporalType.TIME)
-    @NotNull
     @Column(name = "HR_INICIO", nullable = false)
     private Date horaInicio;
     

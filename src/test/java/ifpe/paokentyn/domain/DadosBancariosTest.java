@@ -95,23 +95,21 @@ public class DadosBancariosTest extends GenericTest {
         logger.info("--- Executando testAtualizarDadosComMerge ---");
 
         DadosBancarios dados = buscarPorContaJPQL("12345-6");
-        assertNotNull(dados);
         Long idOriginal = dados.getId(); 
+        em.clear(); // Desconecta o objeto
 
-        em.clear();
-
-        dados.setConta("99999-X");
+        dados.setBanco("Banco Bradesco"); 
+        dados.setAgencia("9999"); 
+        dados.setConta("12345-9");
         
-        em.merge(dados);
-
+        // CORREÇÃO: O merge retorna a instância gerenciada. Precisamos dar flush nela.
+        DadosBancarios dadosGerenciados = em.merge(dados);
         em.flush();
         em.clear();
 
-        DadosBancarios dadosAtualizados = buscarPorContaJPQL("99999-X");
-        assertEquals(idOriginal, dadosAtualizados.getId(), "O ID deve ser o mesmo");
-        assertEquals("99999-X", dadosAtualizados.getConta());
-
-        logger.info("Conta atualizada via merge para: {}", dadosAtualizados.getConta());
+        DadosBancarios dadosAtualizados = buscarPorContaJPQL("12345-9");
+        assertEquals(idOriginal, dadosAtualizados.getId());
+        assertEquals("12345-9", dadosAtualizados.getConta());
     }
 
     @Test

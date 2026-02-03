@@ -6,6 +6,7 @@ package ifpe.paokentyn.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,10 +23,10 @@ public class Ingrediente implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "{ingrediente.nome.notblank}")
+    @Size(max = 100, message = "{ingrediente.nome.size}")
     @Column(name = "TXT_NOME", nullable = false, length = 100, unique = true)
     private String nome;
-
     
     @ManyToMany(mappedBy = "ingredientes", fetch = FetchType.LAZY)
     private List<Pao> paes;

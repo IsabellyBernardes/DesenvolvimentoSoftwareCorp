@@ -4,6 +4,7 @@ import jakarta.persistence.TypedQuery;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import java.util.Date;
+import java.util.Calendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
@@ -33,6 +34,12 @@ public class TarefaTest extends GenericTest {
         return query.getSingleResult();
     }
 
+    private Date criarDataNoFuturo(int dias) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, dias);
+        return cal.getTime();
+    }
+
     @Test
     public void testEncontrarTarefaDoDataSet() {
         logger.info("Executando testEncontrarTarefaDoDataSet");
@@ -47,8 +54,10 @@ public class TarefaTest extends GenericTest {
         Funcionario func = buscarFuncionarioPorNome("João Silva");
         Tarefa novaTarefa = new Tarefa();
         novaTarefa.setDescricao("Limpar forno");
-        novaTarefa.setDataInicio(new Date());
-        novaTarefa.setDataPrevisao(new Date(System.currentTimeMillis() + 86400000));
+        
+        novaTarefa.setDataInicio(new Date()); 
+        novaTarefa.setDataPrevisao(criarDataNoFuturo(1)); 
+        
         novaTarefa.setConcluida(false);
         novaTarefa.setFuncionario(func);
 
@@ -62,7 +71,11 @@ public class TarefaTest extends GenericTest {
         logger.info("--- Executando testAtualizarTarefaGerenciada ---");
         Tarefa tarefa = buscarTarefaPorDescricao("Checar estoque de farinha");
         Long idOriginal = tarefa.getId();
+        
         tarefa.setDescricao("Verificar validade da farinha");
+        
+        tarefa.setDataPrevisao(criarDataNoFuturo(2)); 
+        
         em.flush(); 
         em.clear();
         Tarefa tarefaAtualizada = em.find(Tarefa.class, idOriginal);
@@ -75,7 +88,11 @@ public class TarefaTest extends GenericTest {
         Tarefa tarefa = buscarTarefaPorDescricao("Checar estoque de farinha");
         Long idOriginal = tarefa.getId();
         em.clear(); 
+        
         tarefa.setConcluida(true); 
+        
+        tarefa.setDataPrevisao(criarDataNoFuturo(2)); 
+        
         em.merge(tarefa); 
         em.flush();
         em.clear();

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DadosBancariosCriteriaTest extends GenericTest {
     
     private static final Logger logger = LoggerFactory.getLogger(DadosBancariosCriteriaTest.class);
-
+    
     @Test
     public void testCriteriaBuscaExataPorConta() {
         logger.info("--- Busca Exata por Conta ---");

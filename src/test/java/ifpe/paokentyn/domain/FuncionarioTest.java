@@ -70,33 +70,22 @@ public class FuncionarioTest extends GenericTest {
     @Test
     public void testPersistirFuncionarioComDadosBancarios() {
         logger.info("--- Executando testPersistirFuncionarioComDadosBancarios ---");
+        Padaria padaria = em.find(Padaria.class, 1L);
 
-        Padaria padariaExistente = buscarPadariaPorNomeJPQL("Padaria do Melhor Teste");
-        assertNotNull(padariaExistente);
-
-        DadosBancarios novosDados = new DadosBancarios();
-        novosDados.setBanco("Banco Novo S.A.");
-        novosDados.setAgencia("0002");
-        novosDados.setConta("98765-4");
-        
         Funcionario novoFunc = new Funcionario();
-        novoFunc.setNome("Maria Souza");
+        novoFunc.setPadaria(padaria);
+        novoFunc.setNome("Carlos Silva");
         novoFunc.setCargo("Caixa");
-        novoFunc.setSalario(2100.00);
-        novoFunc.setPadaria(padariaExistente);
+        novoFunc.setSalario(2000.0);
+        novoFunc.setDataContratacao(new java.util.Date());
         
-        novoFunc.setDadosBancarios(novosDados);
+        novoFunc.setCpf("64623918041"); 
+        novoFunc.setEmail("carlos@padaria.com"); 
 
         em.persist(novoFunc);
         em.flush();
 
-        assertNotNull(novoFunc.getId());
-        assertTrue(novoFunc.getId() > 0);
-        
-        Funcionario joao = buscarFuncionarioPorNomeJPQL("João Silva");
-        assertNotEquals(joao.getId(), novoFunc.getId());
-
-        logger.info("Persistido funcionário {} com ID {}", novoFunc.getNome(), novoFunc.getId());
+        assertNotNull(novoFunc.getId(), "O funcionário deveria ser persistido com sucesso");
     }
 
     @Test

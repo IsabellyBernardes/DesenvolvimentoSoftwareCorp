@@ -6,6 +6,8 @@ package ifpe.paokentyn.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -20,15 +22,20 @@ public class DadosBancarios implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "{dadosbancarios.banco.notblank}")
+    @Size(max = 100, message = "{dadosbancarios.banco.size}")
     @Column(name = "TXT_BANCO", nullable = false, length = 100)
     private String banco;
 
-    @NotBlank
+    @NotBlank(message = "{dadosbancarios.agencia.notblank}")
+    @Size(max = 10, message = "{dadosbancarios.agencia.size}")
+    @Pattern(regexp = "[0-9\\-]+", message = "{dadosbancarios.agencia.pattern}")
     @Column(name = "TXT_AGENCIA", nullable = false, length = 10)
     private String agencia;
 
-    @NotBlank
+    @NotBlank(message = "{dadosbancarios.conta.notblank}")
+    @Size(max = 20, message = "{dadosbancarios.conta.size}")
+    @Pattern(regexp = "[0-9\\-]+", message = "{dadosbancarios.conta.pattern}")
     @Column(name = "TXT_CONTA", nullable = false, length = 20)
     private String conta;
 

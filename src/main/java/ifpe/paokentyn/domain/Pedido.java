@@ -13,14 +13,14 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
     
-    @NotNull
-    @PositiveOrZero
+    @NotNull(message = "{pedido.valortotal.notnull}")
+    @PositiveOrZero(message = "{pedido.valortotal.positiveorzero}")
     @Column(name = "NUM_VALOR_TOTAL", nullable = false)
     private Double valorTotal;
     
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
-    @PastOrPresent
+    @NotNull(message = "{pedido.data.notnull}")
+    @PastOrPresent(message = "{pedido.data.pastorpresent}")
     @Column(name = "DT_PEDIDO", nullable = false)
     private Date dataPedido;
     

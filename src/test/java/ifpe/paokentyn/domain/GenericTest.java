@@ -5,7 +5,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,36 +16,71 @@ public abstract class GenericTest {
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected EntityManagerFactory emf;
+    protected static EntityManagerFactory emf;
     protected EntityManager em;
     protected EntityTransaction et;
 
+    @BeforeAll
+    public static void setUpClass() {
+        System.out.println("--> [GenericTest] Criando o Banco de Dados do zero (1 vez)...");
+        emf = Persistence.createEntityManagerFactory("DSC");
+    }
+
+    @AfterAll
+    public static void tearDownClass() {
+        if (emf != null && emf.isOpen()) {
+            emf.close();
+        }
+    }
+
     @BeforeEach
     public void setUp() {
-        logger.info("--> [GenericTest] Recriando banco (Drop & Create)...");
-        emf = Persistence.createEntityManagerFactory("DSC");
-        
-        logger.info("--> [GenericTest] Inserindo dados do DbUnit...");
-        DbUnitUtil.insertData();
-        
         em = emf.createEntityManager();
+        
+        em.getTransaction().begin();
+        logger.info("--> [GenericTest] Limpando dados antigos...");
+        try {
+            em.createNativeQuery("DELETE FROM TB_ITEM_PEDIDO").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_PAO_INGREDIENTE").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_TAREFA").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_PEDIDO").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_FORNADA").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_PAO").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_INGREDIENTE").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_FUNCIONARIO").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_PADARIA").executeUpdate();
+            em.createNativeQuery("DELETE FROM TB_DADOS_BANCARIOS").executeUpdate();
+
+            logger.info("--> [GenericTest] Resetando IDs para 1...");
+            em.createNativeQuery("ALTER TABLE TB_PADARIA ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER TABLE TB_DADOS_BANCARIOS ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER TABLE TB_FUNCIONARIO ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER TABLE TB_PAO ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER TABLE TB_INGREDIENTE ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER TABLE TB_FORNADA ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER TABLE TB_PEDIDO ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER TABLE TB_ITEM_PEDIDO ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+            em.createNativeQuery("ALTER TABLE TB_TAREFA ALTER COLUMN ID RESTART WITH 1").executeUpdate();
+        } catch (Exception e) {
+            logger.warn("Aviso na limpeza do banco (tabelas podem estar vazias). Ignorando...");
+        }
+        em.getTransaction().commit(); 
+
+        logger.info("--> [GenericTest] Inserindo dados do DBUnit...");
+        DbUnitUtil.insertData();
+
         et = em.getTransaction();
         et.begin();
-        logger.info("--> [GenericTest] Transação iniciada.");
     }
 
     @AfterEach
     public void tearDown() {
-        logger.info("--> [GenericTest] Finalizando recursos...");
-        
+        logger.info("--> [GenericTest] Finalizando teste...");
         if (et != null && et.isActive()) {
             et.commit();
         }
-        if (em != null) {
+        if (em != null && em.isOpen()) {
             em.close();
-        }
-        if (emf != null) {
-            emf.close();
         }
     }
 }
