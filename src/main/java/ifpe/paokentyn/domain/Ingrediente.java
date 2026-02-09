@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
+import ifpe.paokentyn.validation.SemNumero;
+
 /**
  *
  * @author isabe
@@ -25,6 +27,7 @@ public class Ingrediente implements Serializable {
 
     @NotBlank(message = "{ingrediente.nome.notblank}")
     @Size(max = 100, message = "{ingrediente.nome.size}")
+    @SemNumero
     @Column(name = "TXT_NOME", nullable = false, length = 100, unique = true)
     private String nome;
     

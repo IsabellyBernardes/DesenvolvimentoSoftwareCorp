@@ -1,6 +1,5 @@
 package ifpe.paokentyn.domain;
 
-import ifpe.paokentyn.util.DbUnitUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -22,7 +21,7 @@ public abstract class GenericTest {
 
     @BeforeAll
     public static void setUpClass() {
-        System.out.println("--> [GenericTest] Criando o Banco de Dados do zero (1 vez)...");
+        // Cria a fábrica de conexões apenas uma vez para todos os testes
         emf = Persistence.createEntityManagerFactory("DSC");
     }
 
@@ -36,49 +35,18 @@ public abstract class GenericTest {
     @BeforeEach
     public void setUp() {
         em = emf.createEntityManager();
-        
-        em.getTransaction().begin();
-        logger.info("--> [GenericTest] Limpando dados antigos...");
-        try {
-            em.createNativeQuery("DELETE FROM TB_ITEM_PEDIDO").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_PAO_INGREDIENTE").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_TAREFA").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_PEDIDO").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_FORNADA").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_PAO").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_INGREDIENTE").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_FUNCIONARIO").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_PADARIA").executeUpdate();
-            em.createNativeQuery("DELETE FROM TB_DADOS_BANCARIOS").executeUpdate();
-
-            logger.info("--> [GenericTest] Resetando IDs para 1...");
-            em.createNativeQuery("ALTER TABLE TB_PADARIA ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-            em.createNativeQuery("ALTER TABLE TB_DADOS_BANCARIOS ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-            em.createNativeQuery("ALTER TABLE TB_FUNCIONARIO ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-            em.createNativeQuery("ALTER TABLE TB_PAO ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-            em.createNativeQuery("ALTER TABLE TB_INGREDIENTE ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-            em.createNativeQuery("ALTER TABLE TB_FORNADA ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-            em.createNativeQuery("ALTER TABLE TB_PEDIDO ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-            em.createNativeQuery("ALTER TABLE TB_ITEM_PEDIDO ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-            em.createNativeQuery("ALTER TABLE TB_TAREFA ALTER COLUMN ID RESTART WITH 1").executeUpdate();
-        } catch (Exception e) {
-            logger.warn("Aviso na limpeza do banco (tabelas podem estar vazias). Ignorando...");
-        }
-        em.getTransaction().commit(); 
-
-        logger.info("--> [GenericTest] Inserindo dados do DBUnit...");
-        DbUnitUtil.insertData();
-
         et = em.getTransaction();
-        et.begin();
+        et.begin(); // Inicia a transação antes de cada teste
     }
 
     @AfterEach
     public void tearDown() {
-        logger.info("--> [GenericTest] Finalizando teste...");
+        // Independente se o teste passou ou falhou, sempre desfazer (Rollback)
+        // Isso garante que o banco fique limpo para o próximo teste
         if (et != null && et.isActive()) {
-            et.commit();
+            et.rollback();
         }
+        
         if (em != null && em.isOpen()) {
             em.close();
         }

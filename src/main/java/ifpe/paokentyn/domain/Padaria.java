@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.validator.constraints.br.CNPJ;
 import jakarta.validation.constraints.Pattern;
 
+import ifpe.paokentyn.validation.CepPernambuco;
+
 @Entity
 @Table(name = "TB_PADARIA")
 public class Padaria {
@@ -20,6 +22,7 @@ public class Padaria {
     
     @Size(min = 9, max = 9, message = "{padaria.cep.size}")
     @Pattern(regexp = "\\d{5}-\\d{3}", message = "{padaria.cep.pattern}")
+    @CepPernambuco
     @Column(name = "TXT_CEP", length = 9)
     private String cep;
     

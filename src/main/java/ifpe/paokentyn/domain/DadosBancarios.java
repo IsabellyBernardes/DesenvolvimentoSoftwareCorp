@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
+import ifpe.paokentyn.validation.SemNumero;
+
 /**
  *
  * @author isabe
@@ -24,6 +26,7 @@ public class DadosBancarios implements Serializable {
 
     @NotBlank(message = "{dadosbancarios.banco.notblank}")
     @Size(max = 100, message = "{dadosbancarios.banco.size}")
+    @SemNumero
     @Column(name = "TXT_BANCO", nullable = false, length = 100)
     private String banco;
 

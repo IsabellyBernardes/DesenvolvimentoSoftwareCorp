@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
+import ifpe.paokentyn.validation.SemNumero;
+
 @Entity
 @Table(name = "TB_PAO")
 public class Pao implements Serializable { 
@@ -19,6 +21,7 @@ public class Pao implements Serializable {
 
     @NotBlank(message = "{pao.nome.notblank}")
     @Size(max = 100, message = "{pao.nome.size}")
+    @SemNumero
     @Column(name = "TXT_NOME_PAO", nullable = false, length = 100)
     private String nomePao;
 

@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.br.CPF;
 import jakarta.validation.constraints.Size;
 
+import ifpe.paokentyn.validation.SemNumero;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +30,7 @@ public class Funcionario implements Serializable {
 
     @NotBlank(message = "{funcionario.nome.notblank}")
     @Size(max = 255, message = "{funcionario.nome.size}")
+    @SemNumero(message = "O nome do funcionário não pode conter números")
     @Column(name = "TXT_NOME", nullable = false, length = 255)
     private String nome;
 
