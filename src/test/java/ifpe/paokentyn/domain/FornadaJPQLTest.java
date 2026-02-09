@@ -57,7 +57,7 @@ public class FornadaJPQLTest extends GenericTest {
         String jpql = "SELECT f FROM Fornada f JOIN f.padaria p WHERE p.nome LIKE :parteNome";
         
         TypedQuery<Fornada> query = em.createQuery(jpql, Fornada.class);
-        query.setParameter("parteNome", "%Teste 2%");
+        query.setParameter("parteNome", "%Teste DOIS%");
 
         List<Fornada> lista = query.getResultList();
 
@@ -90,7 +90,7 @@ public class FornadaJPQLTest extends GenericTest {
         String jpql = "SELECT COUNT(f) FROM Fornada f WHERE f.padaria.nome = :nomePadaria";
         
         TypedQuery<Long> query = em.createQuery(jpql, Long.class);
-        query.setParameter("nomePadaria", "Padaria do Melhor Teste 2");
+        query.setParameter("nomePadaria", "Padaria do Melhor Teste DOIS");
 
         Long qtd = query.getSingleResult();
 

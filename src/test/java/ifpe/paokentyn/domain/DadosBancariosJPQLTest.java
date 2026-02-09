@@ -85,7 +85,7 @@ public class DadosBancariosJPQLTest extends GenericTest {
         String jpql = "SELECT COUNT(d) FROM DadosBancarios d WHERE d.banco = :banco";
         
         TypedQuery<Long> query = em.createQuery(jpql, Long.class);
-        query.setParameter("banco", "Banco Teste S.A. 2");
+        query.setParameter("banco", "Banco Teste S.A. DOIS");
 
         Long quantidade = query.getSingleResult();
 

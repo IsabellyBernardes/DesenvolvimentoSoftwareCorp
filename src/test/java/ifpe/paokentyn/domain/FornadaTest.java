@@ -116,7 +116,7 @@ public class FornadaTest extends GenericTest {
     public void testContarFornadasJPQL() {
         logger.info("--- Teste JPQL: Count ---");
         
-        Long qtd = contarFornadasDaPadariaJPQL("Padaria do Melhor Teste 2");
+        Long qtd = contarFornadasDaPadariaJPQL("Padaria do Melhor Teste DOIS");
         
         assertEquals(2L, qtd);
         logger.info("A Padaria 2 fez {} fornadas.", qtd);

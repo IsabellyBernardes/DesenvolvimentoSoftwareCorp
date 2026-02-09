@@ -72,7 +72,7 @@ public class FornadaCriteriaTest extends GenericTest {
         
         Join<Fornada, Padaria> joinPadaria = root.join("padaria");
         
-        query.where(cb.like(joinPadaria.get("nome"), "%Teste 2%"));
+        query.where(cb.like(joinPadaria.get("nome"), "%Teste DOIS%"));
         
         List<Fornada> lista = em.createQuery(query).getResultList();
         
@@ -111,7 +111,7 @@ public class FornadaCriteriaTest extends GenericTest {
 
         query.select(cb.count(root));
         
-        query.where(cb.equal(joinPadaria.get("nome"), "Padaria do Melhor Teste 2"));
+        query.where(cb.equal(joinPadaria.get("nome"), "Padaria do Melhor Teste DOIS"));
         
         Long qtd = em.createQuery(query).getSingleResult();
         
